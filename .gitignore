@@ -1,0 +1,8 @@
+/config.php
+/.env
+/.env.*
+!/.env.example
+/storage/*
+!/storage/.htaccess
+/database/backup-*.sql
+/*.xlsx
