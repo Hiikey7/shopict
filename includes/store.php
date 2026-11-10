@@ -55,6 +55,21 @@ function banner(string $placement): ?array
 
 // ---------------------------------------------------------------- products
 
+/** Whether the optional shop-page priority table has been installed yet. */
+function shop_priority_schema_available(): bool
+{
+    static $available = null;
+    if ($available === null) {
+        try {
+            db()->query('SELECT 1 FROM product_shop_priorities LIMIT 0');
+            $available = true;
+        } catch (PDOException $e) {
+            $available = false;
+        }
+    }
+    return $available;
+}
+
 /** Products placed in a home page section, in display order, with per-placement options merged in. */
 function section_products(string $section): array
 {
@@ -101,6 +116,19 @@ function shop_products(?string $category, string $search, string $sort, int $pag
     }
     $whereSql = implode(' AND ', $where);
     [$searchRank, $rankParams] = shop_search_rank($search);
+    $priorityParams = [];
+    if (shop_priority_schema_available()) {
+        $priorityScope = 'sp.category_id IS NULL';
+        if ($categoryIds) {
+            $priorityScope .= ' OR sp.category_id IN (' . implode(',', array_fill(0, count($categoryIds), '?')) . ')';
+            $priorityParams = array_map('intval', $categoryIds);
+        }
+        $prioritySelect = '(SELECT MIN(sp.position) FROM product_shop_priorities sp WHERE sp.product_id = products.id AND (' . $priorityScope . ')) AS shop_priority';
+        $priorityOrder = 'shop_priority ASC, ';
+    } else {
+        $prioritySelect = 'NULL AS shop_priority';
+        $priorityOrder = '';
+    }
     $order = match ($sort) {
         'random'     => "CRC32(CONCAT(CURRENT_DATE, '-', id)), id DESC",
         'relevance'  => "($searchRank) DESC, COALESCE(sold, 0) DESC, id DESC",
@@ -113,8 +141,8 @@ function shop_products(?string $category, string $search, string $sort, int $pag
     $stmt->execute($params);
     $total = (int) $stmt->fetchColumn();
     $offset = max(0, ($page - 1) * $perPage);
-    $stmt = db()->prepare("SELECT * FROM products WHERE $whereSql ORDER BY $order LIMIT $perPage OFFSET $offset");
-    $stmt->execute($sort === 'relevance' ? [...$params, ...$rankParams] : $params);
+    $stmt = db()->prepare("SELECT products.*, $prioritySelect FROM products WHERE $whereSql ORDER BY $priorityOrder$order LIMIT $perPage OFFSET $offset");
+    $stmt->execute($sort === 'relevance' ? [...$priorityParams, ...$params, ...$rankParams] : [...$priorityParams, ...$params]);
     $products = array_map('price_product', $stmt->fetchAll());
     foreach ($products as $p) {
         register_product($p);

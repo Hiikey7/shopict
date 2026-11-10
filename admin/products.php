@@ -2,6 +2,53 @@
 require __DIR__ . '/../includes/admin.php';
 require_admin();
 
+$priorityTableReady = shop_priority_schema_available();
+if (is_post() && in_array((string) ($_POST['action'] ?? ''), ['priority_set', 'priority_remove'], true)) {
+    verify_csrf();
+    $productId = filter_var($_POST['product_id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+    $categoryIdRaw = filter_var($_POST['category_id'] ?? '0', FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+    $position = filter_var($_POST['position'] ?? '1', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 999]]);
+    if (!$priorityTableReady) {
+        flash('Install database/migrations/031_shop_priorities.sql in phpMyAdmin before setting shop priorities.', 'error');
+    } elseif (!$productId || $categoryIdRaw === false || $position === false) {
+        flash('Choose a valid product, category and priority position.', 'error');
+    } else {
+        $productCheck = db()->prepare('SELECT id FROM products WHERE id = ?');
+        $productCheck->execute([$productId]);
+        if (!$productCheck->fetchColumn()) {
+            flash('The product could not be found.', 'error');
+        } else {
+            $categoryId = $categoryIdRaw === 0 ? null : $categoryIdRaw;
+            if ($categoryId !== null && (!($category = category_find($categoryId)) || empty($category['is_active']))) {
+                flash('Choose an active category.', 'error');
+            } else {
+                $scopeName = $categoryId === null ? 'all shop categories' : $category['name'];
+                try {
+                    db()->beginTransaction();
+                    $scope = db()->prepare('DELETE FROM product_shop_priorities WHERE product_id = ? AND category_id <=> ?');
+                    $scope->execute([$productId, $categoryId]);
+                    if ($_POST['action'] === 'priority_set') {
+                        $save = db()->prepare('INSERT INTO product_shop_priorities (product_id, category_id, position) VALUES (?, ?, ?)');
+                        $save->execute([$productId, $categoryId, $position]);
+                        db()->commit();
+                        flash('Product priority saved for ' . $scopeName . '.');
+                    } else {
+                        db()->commit();
+                        flash('Product priority removed for ' . $scopeName . '.');
+                    }
+                } catch (Throwable $e) {
+                    if (db()->inTransaction()) {
+                        db()->rollBack();
+                    }
+                    flash('Could not update this shop priority. Please try again.', 'error');
+                }
+            }
+        }
+    }
+    $query = (string) ($_SERVER['QUERY_STRING'] ?? '');
+    redirect('products.php' . ($query !== '' ? '?' . $query : ''));
+}
+
 $q = trim((string) ($_GET['q'] ?? ''));
 $catParam = (string) ($_GET['cat'] ?? ''); // category id, or "none" (links from Product categories)
 $catFilter = $catParam === 'none' ? null : category_find((int) $catParam);
@@ -70,6 +117,17 @@ $stmt = db()->prepare(
 );
 $stmt->execute($params);
 $products = $stmt->fetchAll();
+$prioritiesByProduct = [];
+if ($priorityTableReady && $products) {
+    $productIds = array_column($products, 'id');
+    $in = implode(',', array_fill(0, count($productIds), '?'));
+    $priorityStmt = db()->prepare("SELECT product_id, category_id, position FROM product_shop_priorities WHERE product_id IN ($in) ORDER BY position, id");
+    $priorityStmt->execute($productIds);
+    foreach ($priorityStmt->fetchAll() as $priority) {
+        $prioritiesByProduct[(int) $priority['product_id']][] = $priority;
+    }
+}
+$priorityCategoryTree = category_tree();
 $catValue = $catParam === 'none' ? 'none' : ($catFilter ? (string) $catFilter['id'] : '');
 $state = ['q' => $q, 'cat' => $catValue, 'item' => $itemCat ? $itemSlug : '', 'min' => $minPrice, 'max' => $maxPrice] + $finderParams;
 $link = fn (array $over) => 'products.php?' . http_build_query(array_filter(array_merge($state, $over), fn ($v) => $v !== null && $v !== '' && $v !== []));
@@ -95,6 +153,9 @@ $icon = fn (string $paths, int $size = 20) => '<svg width="' . $size . '" height
 
 admin_header('Products', 'products');
 ?>
+<?php if (!$priorityTableReady): ?>
+<div class="alert alert-warning">To enable shop-page priorities, run <code>database/migrations/031_shop_priorities.sql</code> in phpMyAdmin.</div>
+<?php endif; ?>
 <div class="d-flex justify-content-end mb-3">
   <a class="btn btn-outline-primary me-2" href="product-import.php">Bulk import</a>
   <a class="btn btn-primary" href="product-edit.php">+ Add product</a>
@@ -195,11 +256,11 @@ admin_header('Products', 'products');
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0 product-list">
       <thead>
-        <tr><th style="width:64px"></th><th>Product</th><th></th></tr>
+        <tr><th style="width:64px"></th><th>Product</th><th style="min-width:380px">Shop-page priority</th><th></th></tr>
       </thead>
       <tbody>
         <?php if (!$products): ?>
-        <tr><td colspan="3" class="text-center text-muted py-5">No products found.</td></tr>
+        <tr><td colspan="4" class="text-center text-muted py-5">No products found.</td></tr>
         <?php endif; ?>
         <?php foreach ($products as $p): ?>
         <tr class="row-link" data-href="product-edit.php?id=<?= (int) $p['id'] ?>">
@@ -207,6 +268,29 @@ admin_header('Products', 'products');
           <td>
             <a class="fw-medium text-decoration-none link-dark" href="product-edit.php?id=<?= (int) $p['id'] ?>" title="<?= e($p['title']) ?>"><?= e(short_title($p['title'], 40)) ?></a>
             <?php if (!$p['is_active']): ?><span class="badge badge-off ms-1">Hidden</span><?php endif; ?><?php if (!empty($p['is_preorder'])): ?><span class="badge badge-preorder ms-1">Pre-order</span><?php endif; ?>
+          </td>
+          <td class="shop-priority-cell">
+            <?php if ($priorityTableReady): ?>
+            <form class="d-flex flex-wrap gap-1 align-items-center" method="post" action="<?= e($link(['page' => $page])) ?>">
+              <?= csrf_field() ?>
+              <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
+              <select class="form-select form-select-sm" name="category_id" aria-label="Priority category for <?= e($p['title']) ?>" style="max-width:190px">
+                <option value="0">All categories</option>
+                <?php foreach ($priorityCategoryTree as $mainCategory): ?>
+                <optgroup label="<?= e($mainCategory['name']) ?>">
+                  <option value="<?= (int) $mainCategory['id'] ?>"><?= e($mainCategory['name']) ?> (all subcategories)</option>
+                  <?php foreach ($mainCategory['children'] as $subCategory): ?><option value="<?= (int) $subCategory['id'] ?>">↳ <?= e($subCategory['name']) ?></option><?php endforeach; ?>
+                </optgroup>
+                <?php endforeach; ?>
+              </select>
+              <input class="form-control form-control-sm" type="number" name="position" value="1" min="1" max="999" aria-label="Priority order" title="Smaller numbers appear first" style="width:76px">
+              <button class="btn btn-sm btn-outline-primary" type="submit" name="action" value="priority_set" <?= !$p['is_active'] ? 'disabled title="Unhide this product before prioritizing it"' : '' ?>>Prioritize</button>
+              <button class="btn btn-sm btn-outline-secondary" type="submit" name="action" value="priority_remove">Remove</button>
+            </form>
+            <?php if (!empty($prioritiesByProduct[(int) $p['id']])): ?>
+            <div class="small text-muted mt-1">Current: <?php foreach ($prioritiesByProduct[(int) $p['id']] as $i => $priority): ?><?= $i ? ' · ' : '' ?><?= $priority['category_id'] === null ? 'All categories' : e(category_find((int) $priority['category_id'])['name'] ?? 'Category') ?> (<?= (int) $priority['position'] ?>)<?php endforeach; ?></div>
+            <?php endif; ?>
+            <?php else: ?><span class="small text-muted">Migration needed</span><?php endif; ?>
           </td>
           <td class="text-end text-nowrap">
             <a class="btn btn-sm btn-outline-secondary" href="product-edit.php?id=<?= (int) $p['id'] ?>">Edit</a>
