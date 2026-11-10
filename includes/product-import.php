@@ -45,7 +45,7 @@ function product_import_template_bytes(): string
     $instructions = [
         ['Product bulk import template'],
         ['Enter one product per row on the Products sheet. Keep the header row unchanged.'],
-        ['New products are always imported hidden. The is_active column is included for completeness but is ignored on import.'],
+        ['The is_active column controls store visibility: TRUE/1 makes the product visible; FALSE/0 keeps it hidden.'],
         ['Required: title and price, plus an image path in img_src or the first gallery_images entry. Rows missing required data are rejected; other blank fields stay blank.'],
         ['img_src and img_hover are paths relative to assets/ (for example images/uploads/laptop.webp) or full image URLs. Local image files must already exist under assets/.'],
         ['category_id is one category id. category_slugs is optional: separate category slugs with | to assign multiple categories.'],
@@ -157,7 +157,7 @@ function product_import_parse_xlsx(string $file): array
                 throw new RuntimeException('The workbook shared-string table is too large.');
             }
             $shared = simplexml_load_string($sharedXml, SimpleXMLElement::class, LIBXML_NONET | LIBXML_COMPACT);
-            if (!$shared) {
+            if ($shared === false) {
                 throw new RuntimeException('The workbook shared-string table is invalid.');
             }
             foreach ($shared->xpath('//*[local-name()="si"]') ?: [] as $item) {
@@ -169,7 +169,7 @@ function product_import_parse_xlsx(string $file): array
             }
         }
         $xml = simplexml_load_string($worksheetXml, SimpleXMLElement::class, LIBXML_NONET | LIBXML_COMPACT);
-        if (!$xml) {
+        if ($xml === false) {
             throw new RuntimeException('The Products worksheet XML is invalid.');
         }
         $rows = [];
@@ -339,7 +339,7 @@ function product_import_record(array $row): array
         'progress_width' => $row['progress_width'] !== '' ? mb_substr($row['progress_width'], 0, 10) : null,
         'countdown_timer' => product_import_nullable_number($row['countdown_timer'], 'countdown_timer', true),
         'discount' => product_import_nullable_number($row['discount'], 'discount'),
-        'is_active' => 0,
+        'is_active' => product_import_bool($row['is_active'], 'is_active'),
         'is_preorder' => product_import_bool($row['is_preorder'], 'is_preorder'),
         'seo_title' => $row['seo_title'] !== '' ? mb_substr($row['seo_title'], 0, 120) : null,
         'meta_description' => $row['meta_description'] !== '' ? mb_substr($row['meta_description'], 0, 320) : null,

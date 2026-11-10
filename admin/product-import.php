@@ -81,7 +81,12 @@ if (is_post()) {
                     }
                     $pdo->commit();
                     $imported++;
-                    $results[] = ['row' => $rowNumber, 'title' => $data['title'], 'ok' => true, 'message' => 'Imported hidden'];
+                    $results[] = [
+                        'row' => $rowNumber,
+                        'title' => $data['title'],
+                        'ok' => true,
+                        'message' => (int) $data['is_active'] === 1 ? 'Imported visible' : 'Imported hidden',
+                    ];
                 } catch (Throwable $e) {
                     if ($pdo->inTransaction()) {
                         $pdo->rollBack();
@@ -116,7 +121,7 @@ admin_header('Bulk product import', 'products');
   <h1 class="h5 mb-2">Import products from Excel</h1>
   <p class="text-muted mb-2">Complete the Products sheet and upload the .xlsx file. Each valid row creates a new product; existing products are not edited.</p>
   <ul class="small text-muted mb-3">
-    <li>Imported products are always <strong>hidden</strong> until you review and publish them. The template's <code>is_active</code> value is ignored.</li>
+    <li>Store visibility follows <code>is_active</code>: use <code>1</code> to show a product in the store or <code>0</code> to keep it hidden.</li>
     <li>Required fields: <code>title</code>, <code>price</code>, and an image path in <code>img_src</code> or the first entry in <code>gallery_images</code>. Missing required data rejects that row instead of filling it with a placeholder.</li>
     <li>Optional blank cells remain empty. Image paths must already exist inside <code>assets/</code>, or be an HTTPS image URL.</li>
     <li>Use <code>category_slugs</code> for multiple categories, JSON columns for specifications/options/variants, and separate gallery paths with <code>|</code>. See the template's Instructions sheet.</li>
