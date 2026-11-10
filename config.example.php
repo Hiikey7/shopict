@@ -9,7 +9,7 @@ return [
         'pass'    => 'your_database_password',
         'charset' => 'utf8mb4',
     ],
-    'site_url' => 'https://www.shopict.co.ke',
+    'site_url' => 'https://shopictgadgets.co.ke',
     'visitor_cookie' => 'onsus_vid',
     'cloudinary' => [
         'cloud_name' => '',

@@ -1142,7 +1142,7 @@ function seo_markdown(string $text, int $topLevel = 2): string
 
 function post_url(array $post): string
 {
-    return $post['slug'] . '-g' . (int) $post['id'];
+    return 'post.php?id=' . (int) $post['id'];
 }
 
 /** Published guides, newest first. */

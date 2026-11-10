@@ -13,7 +13,18 @@ function asset(string $path): string
     if (preg_match('#^https?://#i', $path)) {
         return image_url($path); // a picture stored on Cloudinary (or elsewhere)
     }
-    return 'assets/' . ltrim($path, '/');
+    $path = ltrim($path, '/');
+    // The checked-in product uploads were optimized to WebP after the SQL snapshot
+    // was exported, while the snapshot still refers to their former PNG/JPEG names.
+    // Prefer the WebP sibling when the legacy filename is absent.
+    $local = __DIR__ . '/../assets/' . $path;
+    if (!is_file($local) && preg_match('/\.(?:png|jpe?g)$/i', $path)) {
+        $webpPath = preg_replace('/\.(?:png|jpe?g)$/i', '.webp', $path);
+        if (is_file(__DIR__ . '/../assets/' . $webpPath)) {
+            $path = $webpPath;
+        }
+    }
+    return 'assets/' . $path;
 }
 
 /**

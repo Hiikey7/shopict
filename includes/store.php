@@ -81,15 +81,7 @@ function shop_url(array $params = []): string
 {
     // Leave out empty values and page 1 (the default).
     $params = array_filter($params, fn ($v, $k) => $v !== null && $v !== '' && $v !== [] && !($k === 'page' && (int) $v === 1), ARRAY_FILTER_USE_BOTH);
-    $path = 'shop.php';
-    if (isset($params['cat']) && is_string($params['cat']) && !isset($params['category']) && category_by_slug($params['cat'])) {
-        $path = $params['cat'];
-        unset($params['cat']);
-    } elseif (isset($params['make']) && is_string($params['make']) && !isset($params['cat']) && brand_by_slug($params['make'])) {
-        $path = $params['make'];
-        unset($params['make']);
-    }
-    return $path . ($params ? '?' . http_build_query($params) : '');
+    return 'shop.php' . ($params ? '?' . http_build_query($params) : '');
 }
 
 /**
@@ -267,19 +259,8 @@ function shop_filters(?string $category, string $search, array $categoryIds = []
  */
 function product_url(array|int $p): string
 {
-    static $titles = [];
     $id = (int) (is_array($p) ? $p['id'] : $p);
-    if (is_array($p) && isset($p['title'])) {
-        $title = (string) $p['title'];
-    } else {
-        if (!array_key_exists($id, $titles)) {
-            $stmt = db()->prepare('SELECT title FROM products WHERE id = ?');
-            $stmt->execute([$id]);
-            $titles[$id] = (string) $stmt->fetchColumn();
-        }
-        $title = $titles[$id];
-    }
-    return product_slug($title) . '-p' . $id;
+    return 'product.php?id=' . $id;
 }
 
 /** URL-friendly product name, cut at a word boundary to at most 70 characters. */

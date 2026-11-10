@@ -1,4 +1,4 @@
-# Shop ICT Gadgets – online store (www.shopict.co.ke)
+# Shop ICT Gadgets – online store (shopictgadgets.co.ke)
 
 The Shop ICT Gadgets electronics storefront (Nairobi, Laxmi Plaza) on plain PHP and MySQL (prices in Kenyan shillings), with an admin dashboard for products (with
 variants), promotions, orders and visitor analytics. Customers choose free pickup at the shop or countrywide delivery,
@@ -11,13 +11,11 @@ can confirm on WhatsApp, and get an email confirmation.
 
 ## Setup
 
-1. Import the database (creates `onsus_shop` with all tables and the store content):
+1. Create an empty MySQL database and import `database/onsus_shop.sql` into that selected database using phpMyAdmin. The import includes the current storefront schema and seed content; it does not create a database, so it works with cPanel-prefixed database names. It contains `DROP TABLE` statements, so use only a new, empty database.
 
-   ```
-   mysql -u root < database/onsus_shop.sql
-   ```
+   In phpMyAdmin, select the new database before importing `database/onsus_shop.sql`. With command-line MySQL, include the database name: `mysql -u DB_USER -p DB_NAME < database/onsus_shop.sql`.
 
-   Upgrading an existing database? Run any unapplied files in `database/migrations/` in order. This includes `023_product_browse_indexes.sql`, `024_shop_ict_brand_name.sql`, `025_category_keyword_seo.sql`, and `026_admin_email.sql` for the latest performance, branding, SEO, and admin-account updates.
+   For an existing database, back it up first, then apply only the unapplied migrations in order. The current code requires `database/migrations/027_deployment_schema.sql` after the original install or earlier migrations; this migration is safe to run more than once and does not drop tables.
    (`003_prices_to_kes.sql` converts the template's dollar prices at 129 KES = 1 USD; it only runs once.)
 
 2. Copy `config.example.php` to `config.php` and set the database credentials. Keep `config.php` out of Git; it contains private deployment settings.
@@ -27,7 +25,7 @@ can confirm on WhatsApp, and get an email confirmation.
      Always pass `router.php`: the built-in server ignores `.htaccess`, and the router blocks
      `database/`, `storage/`, `includes/`, `partials/` and `config.php`.
    - **Laragon / Apache:** put the folder in `C:\laragon\www` and open its `.test` address.
-   - **Live site:** www.shopict.co.ke (set `site_url` in `config.php` if the address changes).
+   - **Live site:** https://shopictgadgets.co.ke (set `site_url` in `config.php` if the address changes).
      The `.htaccess` files protect the private folders.
 
 4. Log in to `/admin/` using the administrator credentials provisioned for your installation.
@@ -36,6 +34,16 @@ can confirm on WhatsApp, and get an email confirmation.
 
 5. In **Admin → Settings → Orders & WhatsApp**, set your WhatsApp number (e.g. `254712345678`),
    and delivery fee (0 = cost confirmed by phone). Without a WhatsApp number the shop phone is used.
+
+## HostPinacle / cPanel deployment
+
+1. In **Domains**, confirm the main domain document root is `/home/CPANEL_USER/public_html`.
+2. In **Git Version Control**, clone `https://github.com/Hiikey7/shopict.git` to a repository outside `public_html`.
+3. The repository's `.cpanel.yml` deploys the application files to `/home3/shopictg/public_html`; change `DEPLOYPATH` there if the cPanel home path differs.
+4. In phpMyAdmin, create/select a new, empty database and import `database/onsus_shop.sql`. This installer includes the schema fixes needed by the current storefront and its seed data. Do not import it into a POS database or a database containing data to keep.
+5. Copy `config.example.php` to `config.php` in `public_html`, enter the cPanel database credentials, and set `site_url` to `https://shopictgadgets.co.ke`. Keep `config.php` private; it is ignored by Git and blocked by `.htaccess`.
+6. In **Git Version Control → Manage → Pull or Deploy**, click **Update from Remote**, then **Deploy HEAD Commit**. Repeat after pushing code updates to GitHub.
+7. Test the main domain and `/admin/` over HTTPS before making any DNS changes. Keep Vercel available until the HostPinacle copy is verified.
 
 ## Order confirmation emails
 

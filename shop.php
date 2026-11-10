@@ -26,11 +26,6 @@ if (isset($_GET['seg'])) {
         header('Location: ../' . $seg . ($requestQuery ? '?' . http_build_query($requestQuery) : ''), true, 301);
         exit;
     }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && str_ends_with($requestPath, 'shop.php')
-    && ((isset($_GET['cat']) && is_string($_GET['cat']) && category_by_slug($_GET['cat'])) || (isset($_GET['make']) && is_string($_GET['make']) && brand_by_slug($_GET['make'])))) {
-    // Old links (shop.php?cat=laptops) move to the short address for good.
-    header('Location: ' . shop_url($_GET), true, 301);
-    exit;
 }
 $brand = isset($_GET['make']) && is_string($_GET['make']) ? brand_by_slug($_GET['make']) : null;
 

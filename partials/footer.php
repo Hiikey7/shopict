@@ -6,7 +6,7 @@
     $ftCity = trim((string) setting('store_city', ''));
     $ftAbout = trim((string) setting('footer_about', ''));
     // Shop links: All Products, then the main product categories (Admin → Product categories).
-    $ftShop = ['All Products' => 'shop.php', 'Articles' => 'buying-guides'];
+    $ftShop = ['All Products' => 'shop.php', 'Articles' => 'blog.php'];
     foreach (category_tree() as $ftCat) {
         $ftShop[$ftCat['name']] = category_url($ftCat);
     }
