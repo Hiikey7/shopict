@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home3/shopictg/public_html
+    - /bin/cp -R admin api assets database docs includes partials $DEPLOYPATH
+    - /bin/cp about.php blog.php cart.php checkout.php feed.php index.php llms.php order.php post.php privacy-policy.php product.php returns-policy.php robots.php router.php shop.php sitemap.php terms.php wishlist.php manifest.json offline.html product-template.html .htaccess $DEPLOYPATH
