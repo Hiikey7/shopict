@@ -267,9 +267,9 @@ function store_logo(): string
 }
 
 /** Currency shown in front of every price. Prices are stored and shown in whole shillings. */
-const CURRENCY_SYMBOL = 'KSh';
+const CURRENCY_SYMBOL = 'KES';
 
-/** A price for display, e.g. "KSh 12,499" (rounded to whole shillings; the space does not break). */
+/** A price for display, e.g. "KES 12,499" (rounded to whole shillings; the space does not break). */
 function money($amount): string
 {
     return CURRENCY_SYMBOL . "\u{00A0}" . number_format(round((float) $amount), 0, '.', ',');

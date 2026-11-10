@@ -475,8 +475,8 @@
 
   // ------------------------------------------------------------- formatting
 
-  /** "KSh 12,499" — same format as money() in PHP. */
-  const money = (n) => `KSh ${Math.round(Number(n) || 0).toLocaleString("en-US")}`;
+  /** "KES 12,499" — same format as money() in PHP. */
+  const money = (n) => `KES ${Math.round(Number(n) || 0).toLocaleString("en-US")}`;
 
   const el = (tag, className, text) => {
     const node = document.createElement(tag);
