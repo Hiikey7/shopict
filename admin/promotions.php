@@ -6,8 +6,13 @@ if (is_post()) {
     verify_csrf();
     $promoId = (int) ($_POST['id'] ?? 0);
     if (($_POST['action'] ?? '') === 'toggle') {
-        db()->prepare('UPDATE promotions SET is_active = 1 - is_active WHERE id = ?')->execute([$promoId]);
-        flash('Promotion updated.');
+        try {
+            db()->prepare('UPDATE promotions SET is_active = 1 - is_active WHERE id = ?')->execute([$promoId]);
+            flash('Promotion updated.');
+        } catch (Throwable $ex) {
+            error_log('admin promotion toggle failed: ' . $ex->getMessage());
+            flash('The promotion could not be updated. Check the server error log for details.', 'error');
+        }
     }
     redirect('promotions.php');
 }

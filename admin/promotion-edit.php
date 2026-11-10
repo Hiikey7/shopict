@@ -26,9 +26,15 @@ if (is_post()) {
     verify_csrf();
 
     if (($_POST['action'] ?? '') === 'delete' && $promo) {
-        db()->prepare('DELETE FROM promotions WHERE id = ?')->execute([$id]);
-        flash('Promotion "' . $promo['name'] . '" deleted.');
-        redirect('promotions.php');
+        try {
+            db()->prepare('DELETE FROM promotions WHERE id = ?')->execute([$id]);
+            flash('Promotion "' . $promo['name'] . '" deleted.');
+            redirect('promotions.php');
+        } catch (Throwable $ex) {
+            error_log('admin promotion delete failed: ' . $ex->getMessage());
+            flash('The promotion could not be deleted. Check the server error log for details.', 'error');
+            redirect('promotion-edit.php?id=' . $id);
+        }
     }
 
     $form = [
@@ -90,29 +96,39 @@ if (is_post()) {
 
     if (!$errors) {
         $pdo = db();
-        $pdo->beginTransaction();
-        $cols = ['name', 'badge', 'code', 'min_spend', 'max_uses', 'discount_type', 'discount_value', 'applies_to', 'category', 'starts_at', 'ends_at', 'is_active'];
-        $data = $form;
-        if ($data['applies_to'] !== 'category') {
-            $data['category'] = null;
-        }
-        $values = array_map(fn ($c) => $data[$c], $cols);
-        if ($promo) {
-            $pdo->prepare('UPDATE promotions SET ' . implode(', ', array_map(fn ($c) => "$c = ?", $cols)) . ' WHERE id = ?')->execute([...$values, $id]);
-        } else {
-            $pdo->prepare('INSERT INTO promotions (' . implode(', ', $cols) . ') VALUES (' . implode(', ', array_fill(0, count($cols), '?')) . ')')->execute($values);
-            $id = (int) $pdo->lastInsertId();
-        }
-        $pdo->prepare('DELETE FROM promotion_products WHERE promotion_id = ?')->execute([$id]);
-        if ($data['applies_to'] === 'products') {
-            $add = $pdo->prepare('INSERT IGNORE INTO promotion_products (promotion_id, product_id) SELECT ?, id FROM products WHERE id = ?');
-            foreach ($selected as $pid) {
-                $add->execute([$id, $pid]);
+        try {
+            $pdo->beginTransaction();
+            $cols = ['name', 'badge', 'code', 'min_spend', 'max_uses', 'discount_type', 'discount_value', 'applies_to', 'category', 'starts_at', 'ends_at', 'is_active'];
+            $data = $form;
+            if ($data['applies_to'] !== 'category') {
+                $data['category'] = null;
             }
+            $values = array_map(fn ($c) => $data[$c], $cols);
+            if ($promo) {
+                $pdo->prepare('UPDATE promotions SET ' . implode(', ', array_map(fn ($c) => "$c = ?", $cols)) . ' WHERE id = ?')->execute([...$values, $id]);
+            } else {
+                $pdo->prepare('INSERT INTO promotions (' . implode(', ', $cols) . ') VALUES (' . implode(', ', array_fill(0, count($cols), '?')) . ')')->execute($values);
+                $id = (int) $pdo->lastInsertId();
+            }
+            $pdo->prepare('DELETE FROM promotion_products WHERE promotion_id = ?')->execute([$id]);
+            if ($data['applies_to'] === 'products') {
+                $add = $pdo->prepare('INSERT IGNORE INTO promotion_products (promotion_id, product_id) SELECT ?, id FROM products WHERE id = ?');
+                foreach ($selected as $pid) {
+                    $add->execute([$id, $pid]);
+                }
+            }
+            $pdo->commit();
+        } catch (Throwable $ex) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log('admin promotion save failed: ' . $ex->getMessage());
+            $errors['_save'] = 'The promotion could not be saved. Apply the admin database repair migration, then try again.';
         }
-        $pdo->commit();
-        flash($promo ? 'Promotion saved.' : 'Promotion created.');
-        redirect('promotion-edit.php?id=' . $id);
+        if (!$errors) {
+            flash($promo ? 'Promotion saved.' : 'Promotion created.');
+            redirect('promotion-edit.php?id=' . $id);
+        }
     }
 }
 
@@ -128,7 +144,7 @@ $error = fn (string $f) => isset($errors[$f]) ? '<div class="invalid-feedback d-
 admin_header($promo ? 'Edit promotion' : 'New promotion', 'promotions');
 ?>
 <a href="promotions.php" class="small text-decoration-none">← All promotions</a>
-<?php if ($errors): ?><div class="alert alert-danger mt-3">Please fix the highlighted fields.</div><?php endif; ?>
+<?php if ($errors): ?><div class="alert alert-danger mt-3"><?= isset($errors['_save']) ? e($errors['_save']) : 'Please fix the highlighted fields.' ?></div><?php endif; ?>
 <?php if ($promo && !$errors): [$status, $badge] = promotion_status($promo); ?>
 <div class="mt-3"><span class="badge <?= $badge ?>"><?= $status ?></span> <span class="small text-muted ms-1"><?= e(promotion_summary($promo + ['product_ids' => $selected])) ?></span></div>
 <?php endif; ?>
