@@ -17,6 +17,31 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+  // Clean storefront card prices, including legacy markup and dynamically inserted cards.
+  function cleanLeakedProductId(root = document) {
+    const prices = root.matches?.(".price-wrap") ? [root] : [];
+    prices.push(...(root.querySelectorAll?.(".price-wrap") || []));
+    prices.forEach((price) => {
+      const walker = document.createTreeWalker(price, NodeFilter.SHOW_TEXT);
+      const textNodes = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode);
+      textNodes.forEach((node) => {
+        node.nodeValue = node.nodeValue.replace(/(^|\s)262145(?=\s+(?:KES|KSh|[\d,]))\s*/g, "$1");
+      });
+      price.querySelectorAll(".new-price, .old-price").forEach((amount) => {
+        const value = amount.textContent.trim().replace(/^(?:KES|KSh)\s*/i, "");
+        if (/^[\d,]+(?:\.\d+)?$/.test(value)) amount.textContent = `KES\u00a0${value}`;
+      });
+    });
+  }
+
+  cleanLeakedProductId();
+  new MutationObserver((records) => {
+    records.forEach((record) => record.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) cleanLeakedProductId(node);
+    }));
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
   function initImageSkeletons() {
     const finish = (image) => image.removeAttribute("data-image-skeleton");
     const watch = (image) => {
