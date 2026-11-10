@@ -10,7 +10,7 @@ $p = $id ? shop_product($id) : null;
 // One address per product: old "product.php?id=369" links and outdated names go to the current link.
 if ($p && $_SERVER['REQUEST_METHOD'] === 'GET') {
     $asked = basename(rtrim((string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/'));
-    if ($asked !== 'product.php') {
+    if ($asked !== product_url($p)) {
         $query = $_GET;
         unset($query['id']);
         header('Location: ' . product_url($p) . ($query ? '?' . http_build_query($query) : ''), true, 301);

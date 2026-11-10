@@ -259,8 +259,19 @@ function shop_filters(?string $category, string $search, array $categoryIds = []
  */
 function product_url(array|int $p): string
 {
+    static $titles = [];
     $id = (int) (is_array($p) ? $p['id'] : $p);
-    return 'product.php?id=' . $id;
+    if (is_array($p) && isset($p['title'])) {
+        $title = (string) $p['title'];
+    } else {
+        if (!array_key_exists($id, $titles)) {
+            $stmt = db()->prepare('SELECT title FROM products WHERE id = ?');
+            $stmt->execute([$id]);
+            $titles[$id] = (string) $stmt->fetchColumn();
+        }
+        $title = $titles[$id];
+    }
+    return product_slug($title) . '-p' . $id;
 }
 
 /** URL-friendly product name, cut at a word boundary to at most 70 characters. */
