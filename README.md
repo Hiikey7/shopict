@@ -15,7 +15,7 @@ can confirm on WhatsApp, and get an email confirmation.
 
    In phpMyAdmin, select the new database before importing `database/onsus_shop.sql`. With command-line MySQL, include the database name: `mysql -u DB_USER -p DB_NAME < database/onsus_shop.sql`.
 
-   For an existing database, back it up first, then apply only the unapplied migrations in order. If an earlier schema migration was only partly applied, run `database/migrations/028_repair_partial_schema.sql`; it checks each required field separately and does not drop tables.
+   For an existing database, back it up first, then apply only the unapplied migrations in order. If an earlier schema migration was only partly applied, run `database/migrations/028_repair_partial_schema.sql`; it checks each required field separately and does not drop tables. If checkout reports missing order or order-item columns, run `database/migrations/029_order_checkout_repair.sql` in phpMyAdmin; it repairs all columns written by checkout and can be run repeatedly.
    (`003_prices_to_kes.sql` converts the template's dollar prices at 129 KES = 1 USD; it only runs once.)
 
 2. Copy `config.example.php` to `config.php` and set the database credentials. Keep `config.php` out of Git; it contains private deployment settings.
@@ -64,9 +64,7 @@ Emails are in test mode by default (`'driver' => 'log'` in `config.php`): each o
 ],
 ```
 
-For Gmail, create an App Password (Google Account → Security → 2-Step Verification → App passwords).
-Any SMTP provider works (your web host, Zoho, Brevo, Mailgun…). Set "Email me new orders" in
-Settings to get a copy of every order.
+For a cPanel mailbox, use the outgoing server, port, and encryption shown in cPanel → Email Accounts → Connect Devices, and set `username` to the full mailbox address (not the display name) and `password` to that mailbox's password. Gmail requires an App Password. Any SMTP provider works (your web host, Zoho, Brevo, Mailgun…). Set "Email me new orders" in Settings to get a copy of every order. The order page marks a message sent only after the SMTP server accepts it; inbox placement still depends on the receiving mail provider.
 
 ## Storefront pages
 

@@ -33,7 +33,7 @@ partial('page-start', ['title' => ($order ? 'Order ' . $order['order_number'] : 
       <h4 class="fw-semibold mb-2">Thank you, <?= e($order['customer_name']) ?>!</h4>
       <p class="body-md-2 text-main-2 mb-1">Your order <strong class="text-secondary"><?= e($order['order_number']) ?></strong> has been received.</p>
       <p class="body-text-3 text-main-2 mb-0">
-        <?php if ($order['email_sent_at']): ?>A confirmation has been sent to <strong><?= e($order['email']) ?></strong>.<?php else: ?>We'll email <strong><?= e($order['email']) ?></strong> once your order is confirmed.<?php endif; ?>
+        <?php if ($order['email_sent_at']): ?>A confirmation was accepted for delivery to <strong><?= e($order['email']) ?></strong>.<?php else: ?>We couldn't send a confirmation email to <strong><?= e($order['email']) ?></strong> yet. Your order is recorded; please contact the shop if you need confirmation by email.<?php endif; ?>
         We'll call <?= e($order['phone']) ?> to arrange delivery.
       </p>
       <?php else: ?>

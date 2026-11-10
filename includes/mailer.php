@@ -5,8 +5,9 @@ declare(strict_types=1);
 // message to storage/mail/ for local testing. Configured in config.php under "mail".
 
 /**
- * Sends an HTML email (with a plain-text alternative). Returns true when it was handed to the
- * mail server (or saved, with the log driver). Failures are logged, never thrown.
+ * Sends an HTML email (with a plain-text alternative). Returns true only when SMTP accepted it.
+ * The log driver saves a local copy for development but is not a delivery and returns false.
+ * Failures are logged, never thrown.
  */
 function send_mail(string $to, string $subject, string $html, string $text, ?string $replyTo = null): bool
 {
@@ -26,6 +27,7 @@ function send_mail(string $to, string $subject, string $html, string $text, ?str
             $name = date('Ymd-His') . '-' . preg_replace('/[^a-z0-9]+/i', '-', $to) . '-' . bin2hex(random_bytes(3));
             file_put_contents("$dir/$name.html", "<!-- To: " . htmlspecialchars($to) . " | Subject: " . htmlspecialchars($subject) . " -->\n" . $html);
             file_put_contents("$dir/$name.eml", $message);
+            return false;
         }
         return true;
     } catch (Throwable $e) {
