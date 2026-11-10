@@ -15,7 +15,7 @@ can confirm on WhatsApp, and get an email confirmation.
 
    In phpMyAdmin, select the new database before importing `database/onsus_shop.sql`. With command-line MySQL, include the database name: `mysql -u DB_USER -p DB_NAME < database/onsus_shop.sql`.
 
-   For an existing database, back it up first, then apply only the unapplied migrations in order. The current code requires `database/migrations/027_deployment_schema.sql` after the original install or earlier migrations; this migration is safe to run more than once and does not drop tables.
+   For an existing database, back it up first, then apply only the unapplied migrations in order. If an earlier schema migration was only partly applied, run `database/migrations/028_repair_partial_schema.sql`; it checks each required field separately and does not drop tables.
    (`003_prices_to_kes.sql` converts the template's dollar prices at 129 KES = 1 USD; it only runs once.)
 
 2. Copy `config.example.php` to `config.php` and set the database credentials. Keep `config.php` out of Git; it contains private deployment settings.
