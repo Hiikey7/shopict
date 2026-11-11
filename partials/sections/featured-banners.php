@@ -22,7 +22,7 @@ $lines = fn (?string $text) => lines($text) . '<br/>';
                 <h4 class="name link <?= e($b['text_color']) ?>"><?= $lines($b['title']) ?></h4>
                 <p class="caption lh-15 fw-3 <?= e($b['text_color']) ?>"><?= $lines($b['subtitle']) ?></p>
               </div>
-              <div class="box-price <?= e($b['price_color']) ?> fw-medium"><span class="text">KSh&nbsp;</span><span class="price"><?= e($b['price']) ?></span></div>
+              <div class="box-price <?= e($b['price_color']) ?> fw-medium"><span class="price"><?= e(money_text($b['price'])) ?></span></div>
             </div></a>
         </div>
         <?php endforeach; ?>

@@ -29,7 +29,7 @@ $bg = fn (?string $path) => $path ? ' style="background-image: url(' . e(asset($
                     <p class="fw-semibold<?= $main['title_color'] ? '' : ' text-white' ?> h1 mb-0 lh-xxl-73"<?= $main['title_color'] ? ' style="color: ' . e($main['title_color']) . '"' : '' ?>><?= e($main['title']) ?><?php if ($main['title_highlight']): ?> <span class="fw-1"<?= $main['title_highlight_color'] ? ' style="color: ' . e($main['title_highlight_color']) . '"' : '' ?>><?= e($main['title_highlight']) ?></span><?php endif; ?></p>
                     <p class="fw-lighter<?= $main['subtitle_color'] ? '' : ' text-white' ?> fw-1 main-title-3 lh-xl-33"<?= $main['subtitle_color'] ? ' style="color: ' . e($main['subtitle_color']) . '"' : '' ?>><?= e($main['subtitle']) ?></p>
                     <?php if (!empty($main['hero_price_visible']) && ($main['price_label'] || $main['price'])): ?>
-                    <p class="fw-semibold h3 mb-0 hero-main-price" style="color: <?= e($main['hero_price_color'] ?: '#ffffff') ?>"><?php if (($main['price_label'] ?? '') === 'Now'): ?><span><?= e($main['price_label']) ?><?= $main['price'] ? ' ' : '' ?></span><?php endif; ?><?php if ($main['price']): ?><span><?= e($main['price']) ?></span><?php endif; ?></p>
+                    <p class="fw-semibold h3 mb-0 hero-main-price" style="color: <?= e($main['hero_price_color'] ?: '#ffffff') ?>"><?php if (($main['price_label'] ?? '') === 'Now'): ?><span><?= e($main['price_label']) ?><?= $main['price'] ? ' ' : '' ?></span><?php endif; ?><?php if ($main['price']): ?><span><?= e(money_text($main['price'])) ?></span><?php endif; ?></p>
                     <?php endif; ?>
                   </div>
                   <div class="d-flex justify-content-center"><span class="br-line"></span></div>
@@ -81,7 +81,7 @@ $bg = fn (?string $path) => $path ? ' style="background-image: url(' . e(asset($
             <div class="box-title">
               <p class="font-4 text-uppercase<?= $sideWhite ?> title-sidebar hero-side-company"<?= $sideText ?>><?= e($side1['eyebrow']) ?></p>
               <p class="font-4 fw-bold text-uppercase<?= $sideWhite ?> main-title-3 hero-side-name"<?= $sideText ?>><?= e($sideName) ?></p>
-              <?php if ($sidePrice !== ''): ?><p class="font-4 text-uppercase<?= $sideWhite ?> title-sidebar hero-side-price"<?= $sideText ?>><?= e($sidePrice) ?></p><?php endif; ?>
+              <?php if ($sidePrice !== ''): ?><p class="font-4 text-uppercase<?= $sideWhite ?> title-sidebar hero-side-price"<?= $sideText ?>><?= e(money_text($sidePrice)) ?></p><?php endif; ?>
             </div>
             <?php if ($side1['button_text'] && $hasSideLink): ?>
             <div class="box-btn">
@@ -106,7 +106,7 @@ $bg = fn (?string $path) => $path ? ' style="background-image: url(' . e(asset($
             </div>
             <?php if ($side2['price']): ?>
             <div class="box-price">
-              <p class="font-5 fw-light text-white"><span class="text"><?= e($side2['price_label']) ?></span><span class="fw-medium h3 mb-0 text-third-2 lh-xl-49"><?= e($side2['price']) ?></span></p>
+              <p class="font-5 fw-light text-white"><span class="text"><?= e($side2['price_label']) ?></span><span class="fw-medium h3 mb-0 text-third-2 lh-xl-49"><?= e(money_text($side2['price'])) ?></span></p>
             </div>
             <?php endif; ?>
             <?php if ($side2['button_text']): ?>

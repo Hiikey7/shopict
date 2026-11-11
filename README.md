@@ -171,9 +171,9 @@ Admin sessions expire after 30 minutes of inactivity, login and API requests are
 
 ## Prices
 
-All prices are in Kenyan shillings, stored and shown as whole shillings (`KSh 12,499`). Enter plain numbers
-in the admin (`12499`; "KSh" and commas are also accepted). Banner prices are free text: type them as you
-want them shown.
+All prices are in Kenyan shillings, stored and shown as whole shillings (`KES12,499`). Enter plain numbers
+in the admin (`12499`; `KSh`, `KES` and commas are also accepted). Banner price fields accept an amount;
+the storefront adds `KES` and comma separators automatically.
 
 ## Still template placeholders
 

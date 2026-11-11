@@ -155,9 +155,9 @@ partial('page-start', [
             <?php if ($sort !== 'newest'): ?><input type="hidden" name="sort" value="<?= e($sort) ?>"><?php endif; ?>
             <?php foreach ($finderParams as $fk => $fvs): foreach ($fvs as $fv): ?><input type="hidden" name="<?= e($fk) ?>[]" value="<?= e($fv) ?>"><?php endforeach; endforeach; ?>
             <div class="shop-price-row">
-              <input type="number" name="min" min="0" step="1" inputmode="numeric" value="<?= $minPrice !== null ? $minPrice : '' ?>" placeholder="Min" aria-label="Minimum price in KSh<?= $boundMin !== null ? ' (lowest here: ' . number_format($boundMin) . ')' : '' ?>">
+              <input type="number" name="min" min="0" step="1" inputmode="numeric" value="<?= $minPrice !== null ? $minPrice : '' ?>" placeholder="Min" aria-label="Minimum price in KES<?= $boundMin !== null ? ' (lowest here: ' . number_format($boundMin) . ')' : '' ?>">
               <span class="shop-price-dash" aria-hidden="true"></span>
-              <input type="number" name="max" min="0" step="1" inputmode="numeric" value="<?= $maxPrice !== null ? $maxPrice : '' ?>" placeholder="Max" aria-label="Maximum price in KSh<?= $boundMax !== null ? ' (highest here: ' . number_format($boundMax) . ')' : '' ?>">
+              <input type="number" name="max" min="0" step="1" inputmode="numeric" value="<?= $maxPrice !== null ? $maxPrice : '' ?>" placeholder="Max" aria-label="Maximum price in KES<?= $boundMax !== null ? ' (highest here: ' . number_format($boundMax) . ')' : '' ?>">
               <button class="shop-price-apply" type="submit">Apply</button>
             </div>
             <?php if ($minPrice !== null || $maxPrice !== null): ?>

@@ -24,7 +24,7 @@ $products = section_products('smart_home');
           <div class="box-top"><p class="text-white body-text-3 text-uppercase fw-2" style="letter-spacing: 9.8px"><?= e($promo['eyebrow']) ?></p></div>
           <div class="box-bottom">
             <a class="link h3 mb-0 lh-xl-49 text-white" href="<?= e($promo['link_url'] ?: './') ?>"><?= lines($promo['title'], '<br />') ?></a>
-            <div class="box-price"><span class="text fw-2 price-text text-white"><?= e($promo['price_label']) ?></span><span class="h2 mb-0 fw-bold text-price"><?= e($promo['price']) ?></span></div>
+            <div class="box-price"><span class="text fw-2 price-text text-white"><?= e($promo['price_label']) ?></span><span class="h2 mb-0 fw-bold text-price"><?= e(money_text($promo['price'])) ?></span></div>
           </div>
         </div>
       </div>

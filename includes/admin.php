@@ -44,7 +44,7 @@ function banner_placements(): array
             'labels' => [
                 'eyebrow' => ['Company name', 'e.g. Sony. Shown on the first line.'],
                 'title'   => ['Product name', 'Second line. Leave empty to use the linked product\'s name.'],
-                'price'   => ['Price', 'Third line, shown as typed (e.g. KSh 7,418). Leave empty to show the linked product\'s current price.'],
+                'price'   => ['Price', 'Enter the amount; KES and comma separators are added automatically. Leave empty to show the linked product\'s current price.'],
             ],
             'sizes'  => ['image' => '688 × 688 px (transparent PNG)'],
         ],
@@ -85,7 +85,7 @@ const BANNER_FIELD_LABELS = [
     'title_highlight' => ['Title highlight', 'Second part of the title, shown emphasised.'],
     'subtitle'        => ['Subtitle', ''],
     'price_label'     => ['Price label', 'e.g. "From" or "Starting"'],
-    'price'           => ['Price', 'Shown exactly as typed, e.g. KSh 39,999'],
+    'price'           => ['Price', 'Enter an amount; KES and comma separators are added automatically.'],
     'button_text'     => ['Button text', 'Leave empty to hide the button.'],
     'link_url'        => ['Link', 'Where the banner goes when clicked.'],
     'image'           => ['Image', ''],

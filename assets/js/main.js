@@ -28,11 +28,12 @@
       const textNodes = [];
       while (walker.nextNode()) textNodes.push(walker.currentNode);
       textNodes.forEach((node) => {
-        node.nodeValue = node.nodeValue.replace(/(^|\s)262145(?=\s+(?:KES|KSh|[\d,]))\s*/g, "$1");
+        node.nodeValue = node.nodeValue.replace(/(^|\s)262145(?=\s*(?:KES|KSh)?\s*[\d,])\s*/g, "$1");
+        node.nodeValue = node.nodeValue.replace(/\b(?:KES|KSh)\s*/gi, "KES");
       });
       price.querySelectorAll(".new-price, .old-price").forEach((amount) => {
         const value = amount.textContent.trim().replace(/^(?:KES|KSh)\s*/i, "");
-        if (/^[\d,]+(?:\.\d+)?$/.test(value)) amount.textContent = `KES\u00a0${value}`;
+        if (/^[\d,]+(?:\.\d+)?$/.test(value)) amount.textContent = `KES${value}`;
       });
     });
   }
@@ -502,8 +503,8 @@
 
   // ------------------------------------------------------------- formatting
 
-  /** "KES 12,499" — same format as money() in PHP. */
-  const money = (n) => `KES ${Math.round(Number(n) || 0).toLocaleString("en-US")}`;
+  /** "KES12,499" — same format as money() in PHP. */
+  const money = (n) => `KES${Math.round(Number(n) || 0).toLocaleString("en-US")}`;
 
   const el = (tag, className, text) => {
     const node = document.createElement(tag);

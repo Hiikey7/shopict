@@ -21,6 +21,7 @@ partial('sections/hot-products');
 partial('sections/smart-home');
 partial('sections/promo-slider');
 partial('sections/top-lists');
+partial('sections/product-slider', ['section' => 'homepage_featured_bottom', 'nav' => '38']);
 partial('sections/product-slider', ['section' => 'recently_viewed', 'nav' => '12']); // "Trending Products" (same slider as Trending Now)
 partial('sections/brands'); // Authorised Brands logo carousel (hidden in Admin → Sections)
 echo '</div>';

@@ -269,10 +269,26 @@ function store_logo(): string
 /** Currency shown in front of every price. Prices are stored and shown in whole shillings. */
 const CURRENCY_SYMBOL = 'KES';
 
-/** A price for display, e.g. "KES 12,499" (rounded to whole shillings; the space does not break). */
+/** A price for display, e.g. "KES12,499". */
 function money($amount): string
 {
-    return CURRENCY_SYMBOL . "\u{00A0}" . number_format(round((float) $amount), 0, '.', ',');
+    return CURRENCY_SYMBOL . number_format(round((float) $amount), 0, '.', ',');
+}
+
+/** Format a price entered as banner text, normalizing KSh/KES and grouping whole shillings. */
+function money_text($value): string
+{
+    $text = trim((string) $value);
+    if ($text === '') {
+        return '';
+    }
+    $text = preg_replace('/\b(?:KES|KSh)\s*/iu', '', $text);
+    if (preg_match('/^([^\d]*)([\d,]+(?:\.\d+)?)(.*)$/u', $text, $m)) {
+        $prefix = trim($m[1]);
+        $amount = number_format(round((float) str_replace(',', '', $m[2])), 0, '.', ',');
+        return ($prefix !== '' ? $prefix . ' ' : '') . CURRENCY_SYMBOL . $amount . $m[3];
+    }
+    return $text;
 }
 
 /** A plain number for form fields: "12499" or "12499.5", without trailing zeros. */

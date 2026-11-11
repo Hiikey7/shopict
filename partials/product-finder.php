@@ -67,8 +67,8 @@ $icon = fn (string $paths, int $size = 20) => '<svg width="' . $size . '" height
       <fieldset class="finder-block">
         <legend class="finder-label">Amount range</legend>
         <div class="finder-range">
-          <input type="number" name="min" min="0" step="1" inputmode="numeric" placeholder="Min" aria-label="Minimum amount in KSh" value="<?= $minPrice !== null ? $minPrice : '' ?>">
-          <input type="number" name="max" min="0" step="1" inputmode="numeric" placeholder="Max" aria-label="Maximum amount in KSh" value="<?= $maxPrice !== null ? $maxPrice : '' ?>">
+          <input type="number" name="min" min="0" step="1" inputmode="numeric" placeholder="Min" aria-label="Minimum amount in KES" value="<?= $minPrice !== null ? $minPrice : '' ?>">
+          <input type="number" name="max" min="0" step="1" inputmode="numeric" placeholder="Max" aria-label="Maximum amount in KES" value="<?= $maxPrice !== null ? $maxPrice : '' ?>">
         </div>
       </fieldset>
 
