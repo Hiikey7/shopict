@@ -30,24 +30,44 @@ INSERT INTO tmp_home_targets (section_code, position, title_hint, low_price, hig
 
   ('smart_home',1,'EliteBook 830 G8',39500,58500),
   ('smart_home',2,'Essential S30GD',16995,24995),
-  ('smart_home',3,'EcoTank L3250',30000,30000),
-  ('smart_home',4,'C270 HD',3900,3900),
-  ('smart_home',5,'Pro Tower 290',98500,98500),
-  ('smart_home',6,'ProBook 440 G11',112000,128000),
-  ('smart_home',7,'P22',15000,15000),
-  ('smart_home',8,'PIXMA TS3640',16000,16000),
-  ('smart_home',9,'Back-UPS 650VA',9000,9000),
-  ('smart_home',10,'Precision 5560',85000,85000),
-  ('smart_home',11,'All-in-One Desktop',113000,139000),
-  ('smart_home',12,'Odyssey G5 G55C',42000,47000),
-  ('smart_home',13,'MX Master 4',18000,18000),
-  ('smart_home',14,'DeskJet 2975',15500,15500),
-  ('smart_home',15,'MacBook Neo',112000,127000),
-  ('smart_home',16,'527sa',35000,35000),
-  ('smart_home',17,'ThinkPad X13',36000,49500),
-  ('smart_home',18,'Starlink Mini',32000,32000),
-  ('smart_home',19,'Victus 15',123000,188000),
-  ('smart_home',20,'Celebrat A28',2500,2500),
+  ('smart_home',3,'XPS 13 DX13260',123000,123000),
+  ('smart_home',4,'EcoTank L3250',30000,30000),
+  ('smart_home',5,'C270 HD',3900,3900),
+  ('smart_home',6,'Pro Tower 290',98500,98500),
+  ('smart_home',7,'OmniBook 5 Flip',148000,148000),
+  ('smart_home',8,'P22',15000,15000),
+  ('smart_home',9,'PIXMA TS3640',16000,16000),
+  ('smart_home',10,'ProBook 440 G11',112000,128000),
+  ('smart_home',11,'Back-UPS 650VA',9000,9000),
+  ('smart_home',12,'OmniBook Ultra Flip',204000,204000),
+  ('smart_home',13,'Precision 5560',85000,85000),
+  ('smart_home',14,'Odyssey G5 G55C',42000,47000),
+  ('smart_home',15,'EliteBook 1040 G9',79000,79000),
+  ('smart_home',16,'MX Master 4',18000,18000),
+  ('smart_home',17,'DeskJet 2975',15500,15500),
+  ('smart_home',18,'MacBook Neo',112000,127000),
+  ('smart_home',19,'527sa',35000,35000),
+  ('smart_home',20,'ThinkPad X13',36000,49500),
+  ('smart_home',21,'Starlink Mini',32000,32000),
+  ('smart_home',22,'Victus 15',123000,188000),
+  ('smart_home',23,'Celebrat A28',2500,2500),
+  ('smart_home',24,'Pavilion x360 14',113000,113000),
+  ('smart_home',25,'All-in-One Desktop',113000,139000),
+  ('smart_home',26,'G3410',27000,27000),
+  ('smart_home',27,'ZBook Firefly 14 G9',85000,85000),
+  ('smart_home',28,'Smart Monitor M7',61230,79435),
+  ('smart_home',29,'EliteBook 1030 G8',61500,61500),
+  ('smart_home',30,'LaserJet 141w',31000,31000),
+  ('smart_home',31,'ThinkPad E14 Gen 4',79500,79500),
+  ('smart_home',32,'EliteBook 630 G10',65500,65500),
+  ('smart_home',33,'EcoTank L3210',28000,28000),
+  ('smart_home',34,'OmniBook X Flip 14',131000,166000),
+  ('smart_home',35,'1040 G7',58500,64000),
+  ('smart_home',36,'ViewFinity S6',39995,59995),
+  ('smart_home',37,'MacBook Pro 13-inch M1',79000,133500),
+  ('smart_home',38,'IdeaPad Slim 3',98000,98000),
+  ('smart_home',39,'OMEN 16',253000,253000),
+  ('smart_home',40,'UPS 1000VA',15000,15000),
 
   ('top_20',1,'EliteBook 1040 G8',61000,65000),
   ('top_20',2,'G3410',27000,27000),
@@ -174,10 +194,13 @@ UPDATE sections
    SET is_active = 1,
        max_products = CASE code
          WHEN 'trending' THEN 6
-         WHEN 'smart_home' THEN 20
+         WHEN 'smart_home' THEN 40
          WHEN 'homepage_featured_bottom' THEN 10
          ELSE 10
-       END
+       END,
+       note = CASE WHEN code = 'smart_home'
+                   THEN 'Featured Products grid: up to 40 on desktop, 12 on tablets, 8 on phones.'
+                   ELSE note END
  WHERE code IN ('trending','smart_home','top_20','featured_products','top_selling','on_sale','recently_viewed','homepage_featured_bottom')
    AND EXISTS (
      SELECT 1 FROM tmp_home_section_status s

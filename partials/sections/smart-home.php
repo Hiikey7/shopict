@@ -1,8 +1,7 @@
 <?php
 /**
- * Featured Products (section code smart_home): the promo banner fills two columns × two rows of a six-column grid;
- * products fill the rest (4 + 4 beside the banner, then four full rows of 6 below).
- * Tablets show 12 products, phones 8 (the banner is hidden below 1200px, as before).
+ * Featured Products (section code smart_home): the promo banner fills two columns × two rows of a six-column grid.
+ * Up to 40 products show on desktop; tablets show 12 and phones show 8.
  */
 if (!section_visible('smart_home')) {
     return;
@@ -30,8 +29,8 @@ $products = section_products('smart_home');
       </div>
       <?php endif; ?>
       <?php foreach ($products as $i => $p):
-          // How many show: 8 on phones, 12 on tablets, 32 with the banner on computers (36 without it).
-          $cls = ($i >= 8 ? ' sg-from-md' : '') . ($i >= 12 ? ' sg-from-xl' : '') . ($i >= ($promo ? 32 : 36) ? ' sg-never' : '');
+          // How many show: 8 on phones, 12 on tablets and 40 on computers.
+          $cls = ($i >= 8 ? ' sg-from-md' : '') . ($i >= 12 ? ' sg-from-xl' : '') . ($i >= 40 ? ' sg-never' : '');
       ?>
       <div class="smart-grid-item<?= $cls ?>"><?php partial('cards/product', ['p' => $p, 'class' => 'style-small style-img-border', 'delay' => false]); ?></div>
       <?php endforeach; ?>
