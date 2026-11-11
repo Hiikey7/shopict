@@ -649,7 +649,10 @@
     view.variant = (p.variants.find((v) => v.isDefault) || p.variants[0])?.id ?? null;
     if (!view.modal) {
       const asked = Number(new URLSearchParams(location.search).get("v"));
-      if (asked && p.variants.some((v) => v.id === asked)) view.variant = asked;
+      const initial = asked && p.variants.find((v) => v.id === asked);
+      // The server renders the ?v= price before JavaScript starts. Preserve the
+      // same variant so the initial option buttons, price and cart selection agree.
+      if (initial) view.variant = initial.id;
     }
     setQuantity(view, 1);
 
