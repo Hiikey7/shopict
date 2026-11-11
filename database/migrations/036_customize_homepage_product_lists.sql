@@ -1,4 +1,4 @@
--- Reorder homepage product sections using the supplied price ranges as the match key.
+-- Reorder homepage product sections using the supplied price ranges and model hints.
 -- Applies only when every requested visible listing resolves to a product. Product rows,
 -- prices, variants, visibility and inventory are left unchanged.
 -- Run in phpMyAdmin against the storefront database. Review the mapping output afterwards.
@@ -131,11 +131,17 @@ SELECT t.section_code, t.position, t.title_hint, t.low_price AS requested_low,
        t.high_price AS requested_high,
        (SELECT c.product_id
           FROM tmp_home_candidates c
-         WHERE c.low_price = t.low_price AND c.high_price = t.high_price
-           AND (LOWER(c.title) LIKE CONCAT('%', LOWER(t.title_hint), '%')
-                OR (SELECT COUNT(*) FROM tmp_home_candidates c2
-                     WHERE c2.low_price = t.low_price AND c2.high_price = t.high_price) = 1)
+         WHERE (
+                 LOWER(c.title) LIKE CONCAT('%', LOWER(t.title_hint), '%')
+                 OR (
+                   c.low_price <= t.low_price AND c.high_price >= t.high_price
+                   AND (SELECT COUNT(*) FROM tmp_home_candidates c2
+                         WHERE c2.low_price <= t.low_price AND c2.high_price >= t.high_price) = 1
+                 )
+               )
          ORDER BY (LOWER(c.title) LIKE CONCAT('%', LOWER(t.title_hint), '%')) DESC,
+                  (c.low_price = t.low_price AND c.high_price = t.high_price) DESC,
+                  (c.high_price - c.low_price),
                   c.product_id
          LIMIT 1) AS product_id
   FROM tmp_home_targets t;
