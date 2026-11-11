@@ -17,10 +17,12 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  // Clean storefront card prices, including legacy markup and dynamically inserted cards.
+  // Clean leaked product IDs from every storefront product-price treatment, including sections
+  // and dynamically inserted content.
   function cleanLeakedProductId(root = document) {
-    const prices = root.matches?.(".price-wrap") ? [root] : [];
-    prices.push(...(root.querySelectorAll?.(".price-wrap") || []));
+    const priceSelector = ".price-wrap, .mega-feature-price, .product-info-price, .hero-side-price";
+    const prices = root.matches?.(priceSelector) ? [root] : [];
+    prices.push(...(root.querySelectorAll?.(priceSelector) || []));
     prices.forEach((price) => {
       const walker = document.createTreeWalker(price, NodeFilter.SHOW_TEXT);
       const textNodes = [];
