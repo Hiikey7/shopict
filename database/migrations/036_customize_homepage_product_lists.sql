@@ -1,5 +1,5 @@
 -- Reorder homepage product sections using the supplied price ranges and model hints.
--- Updates each section only when every requested visible listing in that section resolves.
+-- Updates each section with all requested listings that resolve. Unmatched rows are reported.
 -- Product rows, prices, variants, visibility and inventory are left unchanged.
 -- Run in phpMyAdmin against the storefront database. Review the mapping output afterwards.
 
@@ -158,16 +158,16 @@ SET @homepage_mapping_complete := (
     FROM tmp_home_resolved WHERE product_id IS NOT NULL
 );
 
--- Replace a list only when every product requested for that section matched.
+-- Replace a list when at least one requested product matched; keep matched products in requested order.
 DELETE sp FROM section_products sp
 JOIN tmp_home_section_status s ON s.section_code = sp.section
-WHERE s.matched_count = s.requested_count;
+WHERE s.matched_count > 0;
 
 INSERT INTO section_products (section, position, product_id, animation, wow_delay)
 SELECT r.section_code, r.position, r.product_id, NULL, NULL
   FROM tmp_home_resolved r
   JOIN tmp_home_section_status s ON s.section_code = r.section_code
- WHERE s.matched_count = s.requested_count
+ WHERE s.matched_count > 0 AND r.product_id IS NOT NULL
  ORDER BY r.section_code, r.position;
 
 UPDATE sections
@@ -181,7 +181,7 @@ UPDATE sections
  WHERE code IN ('trending','smart_home','top_20','featured_products','top_selling','on_sale','recently_viewed','homepage_featured_bottom')
    AND EXISTS (
      SELECT 1 FROM tmp_home_section_status s
-      WHERE s.section_code = sections.code AND s.matched_count = s.requested_count
+      WHERE s.section_code = sections.code AND s.matched_count > 0
    );
 
 COMMIT;
@@ -189,7 +189,9 @@ COMMIT;
 -- Review section completeness and product matches. Incomplete sections keep their existing list.
 SELECT @homepage_mapping_complete AS all_products_matched;
 SELECT section_code, requested_count, matched_count,
-       IF(matched_count = requested_count, 'updated', 'kept existing list') AS action_taken
+       CASE WHEN matched_count = 0 THEN 'kept existing list'
+            WHEN matched_count = requested_count THEN 'updated all products'
+            ELSE 'updated matched products only' END AS action_taken
   FROM tmp_home_section_status ORDER BY section_code;
 SELECT r.section_code, r.position, r.title_hint, r.requested_low, r.requested_high,
        p.title AS matched_product_title, r.product_id
