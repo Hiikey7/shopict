@@ -1,6 +1,6 @@
 -- Reorder homepage product sections using the supplied price ranges and model hints.
--- Applies only when every requested visible listing resolves to a product. Product rows,
--- prices, variants, visibility and inventory are left unchanged.
+-- Updates each section only when every requested visible listing in that section resolves.
+-- Product rows, prices, variants, visibility and inventory are left unchanged.
 -- Run in phpMyAdmin against the storefront database. Review the mapping output afterwards.
 
 START TRANSACTION;
@@ -146,21 +146,29 @@ SELECT t.section_code, t.position, t.title_hint, t.low_price AS requested_low,
          LIMIT 1) AS product_id
   FROM tmp_home_targets t;
 
+CREATE TEMPORARY TABLE tmp_home_section_status ENGINE=InnoDB AS
+SELECT t.section_code, COUNT(*) AS requested_count,
+       SUM(r.product_id IS NOT NULL) AS matched_count
+  FROM tmp_home_targets t
+  JOIN tmp_home_resolved r ON r.section_code = t.section_code AND r.position = t.position
+ GROUP BY t.section_code;
+
 SET @homepage_mapping_complete := (
   SELECT COUNT(*) = (SELECT COUNT(*) FROM tmp_home_targets)
     FROM tmp_home_resolved WHERE product_id IS NOT NULL
 );
 
--- Replace only these lists, and only if all 86 requested products matched.
-DELETE FROM section_products
- WHERE section IN ('trending','smart_home','top_20','featured_products','top_selling','on_sale','recently_viewed','homepage_featured_bottom')
-   AND @homepage_mapping_complete = 1;
+-- Replace a list only when every product requested for that section matched.
+DELETE sp FROM section_products sp
+JOIN tmp_home_section_status s ON s.section_code = sp.section
+WHERE s.matched_count = s.requested_count;
 
 INSERT INTO section_products (section, position, product_id, animation, wow_delay)
-SELECT section_code, position, product_id, NULL, NULL
-  FROM tmp_home_resolved
- WHERE @homepage_mapping_complete = 1
- ORDER BY section_code, position;
+SELECT r.section_code, r.position, r.product_id, NULL, NULL
+  FROM tmp_home_resolved r
+  JOIN tmp_home_section_status s ON s.section_code = r.section_code
+ WHERE s.matched_count = s.requested_count
+ ORDER BY r.section_code, r.position;
 
 UPDATE sections
    SET is_active = 1,
@@ -171,12 +179,18 @@ UPDATE sections
          ELSE 10
        END
  WHERE code IN ('trending','smart_home','top_20','featured_products','top_selling','on_sale','recently_viewed','homepage_featured_bottom')
-   AND @homepage_mapping_complete = 1;
+   AND EXISTS (
+     SELECT 1 FROM tmp_home_section_status s
+      WHERE s.section_code = sections.code AND s.matched_count = s.requested_count
+   );
 
 COMMIT;
 
--- Review every match and the completion flag. A 0 flag means no section lists were changed.
+-- Review section completeness and product matches. Incomplete sections keep their existing list.
 SELECT @homepage_mapping_complete AS all_products_matched;
+SELECT section_code, requested_count, matched_count,
+       IF(matched_count = requested_count, 'updated', 'kept existing list') AS action_taken
+  FROM tmp_home_section_status ORDER BY section_code;
 SELECT r.section_code, r.position, r.title_hint, r.requested_low, r.requested_high,
        p.title AS matched_product_title, r.product_id
   FROM tmp_home_resolved r
@@ -184,5 +198,6 @@ SELECT r.section_code, r.position, r.title_hint, r.requested_low, r.requested_hi
  ORDER BY r.section_code, r.position;
 
 DROP TEMPORARY TABLE tmp_home_resolved;
+DROP TEMPORARY TABLE tmp_home_section_status;
 DROP TEMPORARY TABLE tmp_home_candidates;
 DROP TEMPORARY TABLE tmp_home_targets;
