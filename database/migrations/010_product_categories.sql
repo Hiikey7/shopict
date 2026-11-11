@@ -77,7 +77,11 @@ SELECT p.id, s.name, s.slug, s.pos FROM (
   SELECT 'accessories', 'External Hard Drives', 'external-hard-drives', 5 UNION ALL
   SELECT 'accessories', 'HDMI Cables', 'hdmi-cables', 6 UNION ALL
   SELECT 'accessories', 'Power Banks', 'power-banks', 7 UNION ALL
-  SELECT 'accessories', 'WiFi Routers', 'wifi-routers', 8
+  SELECT 'accessories', 'WiFi Routers', 'wifi-routers', 8 UNION ALL
+  SELECT 'accessories', 'Desktop Computers', 'desktop-computers', 9 UNION ALL
+  SELECT 'accessories', 'Projectors', 'projectors', 10 UNION ALL
+  SELECT 'accessories', 'UPS & Power Protection', 'ups-power-protection', 11 UNION ALL
+  SELECT 'accessories', 'Networking Equipment', 'network-equipment', 12
 ) s JOIN product_categories p ON p.slug = s.parent AND p.parent_id IS NULL;
 
 -- Products point at a category (main or sub). The text "category" column keeps the shown name.
