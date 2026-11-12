@@ -20,30 +20,43 @@
   // Clean leaked product IDs from every storefront product-price treatment, including sections
   // and dynamically inserted content.
   function cleanLeakedProductId(root = document) {
-    const priceSelector = ".price-wrap, .mega-feature-price, .product-info-price, .hero-side-price, .box-price";
+    const cleanText = (node) => {
+      const cleaned = node.nodeValue.replace(/262145(?=\s*(?:(?:KES|KSh)\s*)?[\d,])\s*/gi, "");
+      if (cleaned !== node.nodeValue) node.nodeValue = cleaned;
+    };
+    if (root.nodeType === Node.TEXT_NODE) {
+      cleanText(root);
+    } else {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) cleanText(walker.currentNode);
+    }
+
+    const priceSelector = ".price-wrap, .mega-feature-price, .product-info-price, .hero-side-price, .box-price, .hero-main-price";
     const prices = root.matches?.(priceSelector) ? [root] : [];
     prices.push(...(root.querySelectorAll?.(priceSelector) || []));
     prices.forEach((price) => {
       const walker = document.createTreeWalker(price, NodeFilter.SHOW_TEXT);
-      const textNodes = [];
-      while (walker.nextNode()) textNodes.push(walker.currentNode);
-      textNodes.forEach((node) => {
-        node.nodeValue = node.nodeValue.replace(/(^|\s)262145(?=\s*(?:KES|KSh)?\s*[\d,])\s*/g, "$1");
-        node.nodeValue = node.nodeValue.replace(/\b(?:KES|KSh)\s*/gi, "KES");
-      });
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const normalized = node.nodeValue.replace(/\b(?:KES|KSh)\s*/gi, "KES");
+        if (normalized !== node.nodeValue) node.nodeValue = normalized;
+      }
       price.querySelectorAll(".new-price, .old-price").forEach((amount) => {
         const value = amount.textContent.trim().replace(/^(?:KES|KSh)\s*/i, "");
-        if (/^[\d,]+(?:\.\d+)?$/.test(value)) amount.textContent = `KES${value}`;
+        if (/^[\d,]+(?:\.\d+)?$/.test(value) && amount.textContent !== `KES${value}`) amount.textContent = `KES${value}`;
       });
     });
   }
 
   cleanLeakedProductId();
   new MutationObserver((records) => {
-    records.forEach((record) => record.addedNodes.forEach((node) => {
-      if (node.nodeType === Node.ELEMENT_NODE) cleanLeakedProductId(node);
-    }));
-  }).observe(document.documentElement, { childList: true, subtree: true });
+    records.forEach((record) => {
+      if (record.type === "characterData") cleanLeakedProductId(record.target);
+      record.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) cleanLeakedProductId(node);
+      });
+    });
+  }).observe(document.documentElement, { childList: true, characterData: true, subtree: true });
 
   function initImageSkeletons() {
     const finish = (image) => image.removeAttribute("data-image-skeleton");

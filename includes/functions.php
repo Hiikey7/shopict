@@ -282,6 +282,8 @@ function money_text($value): string
     if ($text === '') {
         return '';
     }
+    // Older storefront markup could prepend the leaked banner/product ID to a price.
+    $text = preg_replace('/262145(?=\s*(?:(?:KES|KSh)\s*)?[\d,])\s*/iu', '', $text);
     $text = preg_replace('/\b(?:KES|KSh)\s*/iu', '', $text);
     if (preg_match('/^([^\d]*)([\d,]+(?:\.\d+)?)(.*)$/u', $text, $m)) {
         $prefix = trim($m[1]);
