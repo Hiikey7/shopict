@@ -16,7 +16,7 @@ if (!$featured) {
     <a class="mega-feature-slide<?= $fi === 0 ? ' is-active' : '' ?>" href="<?= e(product_url($fp)) ?>" data-mf-slide aria-roledescription="slide" aria-label="<?= $fi + 1 ?> of <?= count($featured) ?>"<?= $fi === 0 ? '' : ' aria-hidden="true" tabindex="-1"' ?>>
       <span class="mega-feature-img"><?= img($fp['img_src'], 300, 300, '', $fp['title']) ?></span>
       <span class="mega-feature-name"><?= e($fp['title']) ?></span>
-      <span class="mega-feature-price"><?= money($fp['price']) ?><?php if (has_old_price($fp)): ?> <s><?= money($fp['old_price']) ?></s><?php endif; ?></span>
+      <span class="mega-feature-price"><?= e(money_text($fp['price'])) ?><?php if (has_old_price($fp)): ?> <s><?= e(money_text($fp['old_price'])) ?></s><?php endif; ?></span>
     </a>
     <?php endforeach; ?>
   </div>

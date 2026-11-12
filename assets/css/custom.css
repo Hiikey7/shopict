@@ -457,6 +457,13 @@
    keeping its proportions (never stretched, squeezed or cropped). */
 .banner-image-product-2 .item-image { width: 240px; height: 230px; display: flex; align-items: center; justify-content: center; }
 .banner-image-product-2 .item-image img { width: 100%; height: 100%; max-width: none; object-fit: contain; object-position: center; }
+/* Mobile promo banners: smaller copy and one consistent, proportion-safe product image box. */
+@media (max-width: 767.98px) {
+  .promo-loop .banner-image-product-2 .item-image { width: 112px; height: 112px; }
+  .promo-loop .banner-image-product-2 .item-image img { width: 100%; height: 100%; object-fit: contain; }
+  .promo-loop .banner-image-product-2.type-sp-2 .item-banner .inner { width: 58%; }
+  .promo-loop .banner-image-product-2.type-sp-2 .item-banner .name { font-size: clamp(13px, 3.8vw, 16px); line-height: 1.2; }
+}
 @media (max-width: 1199.98px) {
   .banner-image-product-2 .item-image { width: 200px; height: 190px; }
 }
