@@ -523,11 +523,11 @@
 
 /* Keep featured promo card text readable without crowding the product image on phones. */
 @media (max-width: 575.98px) {
-  .themesFlat .wg-product-view.style-2 .name { font-size: 18px; line-height: 22px; }
+  .themesFlat .wg-product-view.style-2 .name { font-size: 16px; line-height: 20px; }
   .themesFlat .wg-product-view.style-2 .tag,
-  .themesFlat .wg-product-view.style-2 .caption { font-size: 12px; line-height: 16px; }
-  .themesFlat .wg-product-view.style-2 .box-price .text { padding-top: 4px; font-size: 12px; line-height: 16px; }
-  .themesFlat .wg-product-view.style-2 .box-price .price { font-size: 22px; line-height: 26px; }
+  .themesFlat .wg-product-view.style-2 .caption { font-size: 11px; line-height: 14px; }
+  .themesFlat .wg-product-view.style-2 .box-price .text { padding-top: 4px; font-size: 11px; line-height: 14px; }
+  .themesFlat .wg-product-view.style-2 .box-price .price { font-size: 18px; line-height: 22px; }
 }
 
 /* ---------------------------------------------------------------- Promo slider loop: 2 full ads + half an ad each side (desktop) */

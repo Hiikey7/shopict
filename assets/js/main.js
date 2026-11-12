@@ -20,7 +20,7 @@
   // Clean leaked product IDs from every storefront product-price treatment, including sections
   // and dynamically inserted content.
   function cleanLeakedProductId(root = document) {
-    const priceSelector = ".price-wrap, .mega-feature-price, .product-info-price, .hero-side-price";
+    const priceSelector = ".price-wrap, .mega-feature-price, .product-info-price, .hero-side-price, .box-price";
     const prices = root.matches?.(priceSelector) ? [root] : [];
     prices.push(...(root.querySelectorAll?.(priceSelector) || []));
     prices.forEach((price) => {
