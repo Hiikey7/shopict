@@ -10,6 +10,8 @@ return [
         'charset' => 'utf8mb4',
     ],
     'site_url' => 'https://shopictgadgets.co.ke',
+    // Set a private random 64-character hexadecimal value in the live config.php.
+    'admin_access_token' => '',
     'visitor_cookie' => 'onsus_vid',
     'cloudinary' => [
         'cloud_name' => '',

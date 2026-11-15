@@ -11,6 +11,9 @@ Options -Indexes
   RewriteRule ^llms\.txt$ llms.php [L]
   RewriteRule ^google-merchant-feed\.xml$ feed.php [L]
 
+  # Secret admin entry point. Direct /admin requests still require its session gate.
+  RewriteRule ^manage/([a-f0-9]{64})/?$ admin-entry.php?key=$1 [L,QSA,NC]
+
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]

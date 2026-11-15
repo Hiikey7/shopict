@@ -5,6 +5,22 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/bootstrap.php';
 
+// A private entry-token session must be established before any admin endpoint is usable.
+$adminAccessToken = (string) config('admin_access_token');
+$adminGateSession = (string) ($_SESSION['admin_gate'] ?? '');
+$adminGateActivity = (int) ($_SESSION['admin_gate_last_activity'] ?? 0);
+if (!preg_match('/^[a-f0-9]{64}$/i', $adminAccessToken)
+    || $adminGateActivity < 1
+    || time() - $adminGateActivity > 43200
+    || !hash_equals(hash('sha256', $adminAccessToken), $adminGateSession)
+) {
+    unset($_SESSION['admin_gate'], $_SESSION['admin_gate_last_activity'], $_SESSION['admin_id'], $_SESSION['admin_last_activity']);
+    http_response_code(404);
+    header('X-Robots-Tag: noindex, nofollow');
+    exit('Not Found');
+}
+$_SESSION['admin_gate_last_activity'] = time();
+
 const UPLOAD_DIR = 'images/uploads';
 const UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
 

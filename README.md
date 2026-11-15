@@ -28,9 +28,10 @@ can confirm on WhatsApp, and get an email confirmation.
    - **Live site:** https://shopictgadgets.co.ke (set `site_url` in `config.php` if the address changes).
      The `.htaccess` files protect the private folders.
 
-4. Log in to `/admin/` using the administrator credentials provisioned for your installation.
-   Before putting the site online, replace any initial password with a unique password of at least
-   12 characters under **Settings**. Use HTTPS for the live admin dashboard.
+4. Before deploying, add a private 64-character hexadecimal `admin_access_token` to the live
+   `config.php` (never commit it to Git). Open `/manage/<token>` to establish the admin-only session;
+   direct `/admin/` visits are hidden. Then log in with the administrator credentials provisioned
+   for your installation. Use HTTPS and a unique password of at least 12 characters.
 
 5. In **Admin → Settings → Orders & WhatsApp**, set your WhatsApp number (e.g. `254712345678`),
    and delivery fee (0 = cost confirmed by phone). Without a WhatsApp number the shop phone is used.
