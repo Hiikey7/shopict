@@ -138,7 +138,8 @@ $chartData = array_map(fn ($d, $r) => ['label' => date('D, M j', strtotime($d)),
 /** Readable name for a page path: product pages show the product name, the shop shows its category or search. */
 $titles = $pdo->query('SELECT id, title FROM products')->fetchAll(PDO::FETCH_KEY_PAIR);
 $pageLabel = function (array $r) use ($titles): string {
-    $path = (string) $r['path'];
+    // Older rows may contain query strings; never surface search terms or other URL data in reports.
+    $path = analytics_path((string) $r['path']);
     parse_str((string) parse_url($path, PHP_URL_QUERY), $query);
     $code = ' <code class="small text-muted">' . e($path) . '</code>';
     if (str_starts_with($path, '/product.php') && isset($titles[(int) ($query['id'] ?? 0)])) {

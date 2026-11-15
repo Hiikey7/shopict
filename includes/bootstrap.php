@@ -19,9 +19,13 @@ session_start([
 ]);
 if (!headers_sent()) {
     header('X-Content-Type-Options: nosniff');
-    header('X-Frame-Options: SAMEORIGIN');
+    header('X-Frame-Options: DENY');
     header('Referrer-Policy: strict-origin-when-cross-origin');
     header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
+    header('X-Permitted-Cross-Domain-Policies: none');
+    if ($isHttps) {
+        header('Strict-Transport-Security: max-age=31536000');
+    }
     if ($isPrivateRequest) {
         header('Cache-Control: no-store, private, max-age=0');
         header('Pragma: no-cache');
@@ -66,6 +70,7 @@ function visitor_id(): string
         'expires'  => time() + 60 * 60 * 24 * 365,
         'path'     => '/',
         'httponly' => true,
+        'secure'   => !empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off',
         'samesite' => 'Lax',
     ]);
     $_COOKIE[$name] = $id;

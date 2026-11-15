@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 require __DIR__ . '/../includes/bootstrap.php';
 
+enforce_api_rate_limit('search-suggest', 120, 60);
+
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     json_response(['ok' => false, 'error' => 'Method not allowed'], 405);
 }
 
-$query = mb_substr(trim((string) ($_GET['q'] ?? '')), 0, 100);
+$rawQuery = $_GET['q'] ?? '';
+$query = mb_substr(trim(is_string($rawQuery) ? $rawQuery : ''), 0, 100);
 if (mb_strlen($query) < 2) {
     json_response(['ok' => true, 'products' => []]);
 }

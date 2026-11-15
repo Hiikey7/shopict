@@ -14,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (InvalidArgumentException $e) {
         json_response(['ok' => false, 'error' => $e->getMessage()], 404);
     }
+} elseif ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    header('Allow: GET, POST');
+    json_response(['ok' => false, 'error' => 'Method not allowed'], 405);
 }
 
 json_response(['ok' => true, 'ids' => wishlist_ids()]);

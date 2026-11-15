@@ -792,6 +792,7 @@ function cart_items(): array
  */
 function cart_add(int $productId, int $quantity = 1, ?int $variantId = null): void
 {
+    $quantity = max(1, min($quantity, 99));
     if (!shop_product($productId)) {
         throw new InvalidArgumentException('Product not found');
     }

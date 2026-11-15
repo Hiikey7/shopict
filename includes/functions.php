@@ -213,6 +213,15 @@ function request_rate_limited(string $scope, int $limit, int $windowSeconds): bo
     }
 }
 
+/** API limiter response shared by expensive or abuse-prone public endpoints. */
+function enforce_api_rate_limit(string $scope, int $limit, int $windowSeconds): void
+{
+    if (request_rate_limited($scope, $limit, $windowSeconds)) {
+        header('Retry-After: ' . $windowSeconds);
+        json_response(['ok' => false, 'error' => 'Too many requests. Please wait and try again.'], 429);
+    }
+}
+
 /**
  * Makes the app icons from the store logo: install icons (192, 512, maskable 512), the phone home-screen
  * icon (180), the favicon (64 + favicon.ico) and the fallback logo. Returns false if the logo can't be read.
@@ -360,6 +369,14 @@ function api_input(): array
     if (!hash_equals(csrf_token(), $token)) {
         json_response(['ok' => false, 'error' => 'Invalid session, please reload the page'], 419);
     }
-    $data = json_decode((string) file_get_contents('php://input'), true);
+    $maxBytes = 65536;
+    if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > $maxBytes) {
+        json_response(['ok' => false, 'error' => 'Request is too large'], 413);
+    }
+    $body = file_get_contents('php://input', false, null, 0, $maxBytes + 1);
+    if ($body === false || strlen($body) > $maxBytes) {
+        json_response(['ok' => false, 'error' => 'Request is too large'], 413);
+    }
+    $data = json_decode($body, true);
     return is_array($data) ? $data : [];
 }

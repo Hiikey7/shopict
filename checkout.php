@@ -12,6 +12,10 @@ $action = (string) ($_POST['promo_action'] ?? '');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!hash_equals(csrf_token(), (string) ($_POST['_token'] ?? ''))) {
         $problem = 'Your session expired. Please check your details and confirm again.';
+    } elseif ($action === 'apply' && request_rate_limited('checkout-promo', 12, 900)) {
+        $problem = 'Too many promo code attempts. Please wait 15 minutes and try again.';
+    } elseif ($action === '' && request_rate_limited('checkout-order', 20, 900)) {
+        $problem = 'Too many checkout attempts. Please wait 15 minutes and try again.';
     } elseif (trim((string) ($_POST['co_ref_hp'] ?? '')) !== '' && time() - (int) ($_SESSION['checkout_shown_at'] ?? 0) < 4) {
         // Spam check: a hidden field that people never see was filled in AND the form came back within
         // seconds of opening. (Browser autofill can fill hidden fields too, so the field alone is not enough.)

@@ -15,5 +15,6 @@ session_regenerate_id(true);
 $_SESSION['admin_gate'] = hash('sha256', $expected);
 $_SESSION['admin_gate_last_activity'] = time();
 header('Referrer-Policy: no-referrer');
+header('X-Robots-Tag: noindex, nofollow');
 header('Location: /admin/login.php', true, 302);
 exit;

@@ -357,6 +357,9 @@ function upload_image(string $field, ?int $index = null): ?array
     if (!$info || !isset($types[$info[2]])) {
         throw new RuntimeException('Please upload a JPG, PNG, GIF or WebP image.');
     }
+    if ($info[0] < 1 || $info[1] < 1 || $info[0] > 8000 || $info[1] > 8000 || $info[0] * $info[1] > 16000000) {
+        throw new RuntimeException('Images must be no larger than 8,000 px per side or 16 megapixels total.');
+    }
     // Lighter file: at most 1600 px, saved as WebP (transparency kept). GIFs are kept as they are.
     $file = optimize_image($tmp);
     $made = $file !== $tmp;

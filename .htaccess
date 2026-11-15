@@ -4,6 +4,10 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # Refuse legacy methods that should never reach storefront handlers.
+  RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)$ [NC]
+  RewriteRule .* - [F,L]
+
   # Files for search engines and AI assistants, written from the database.
   RewriteRule ^robots\.txt$ robots.php [L]
   RewriteRule ^sitemap\.xml$ sitemap.php [L]
