@@ -5,7 +5,7 @@ $config = require __DIR__ . '/../config.php';
 
 $requestPath = (string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $normalizedRequestPath = str_replace('\\', '/', $requestPath);
-$isAdminRequest = preg_match('#(?:^|/)admin(?:/|$)|(?:^|/)admin-entry\.php$|^/manage/[a-f0-9]{64}/?$#i', $normalizedRequestPath) === 1;
+$isAdminRequest = preg_match('#(?:^|/)admin(?:/|$)|(?:^|/)admin-entry\.php$|(?:^|/)manage/[a-f0-9]{64}(?:/|$)#i', $normalizedRequestPath) === 1;
 $isPrivateRequest = $isAdminRequest
     || preg_match('#(?:^|/)api(?:/|$)|(?:^|/)(?:cart|checkout|wishlist|order)\.php$#i', $normalizedRequestPath) === 1;
 $isHttps = !empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off';
@@ -29,6 +29,9 @@ if (!headers_sent()) {
     if ($isPrivateRequest) {
         header('Cache-Control: no-store, private, max-age=0');
         header('Pragma: no-cache');
+    }
+    if ($isAdminRequest) {
+        header('Referrer-Policy: no-referrer');
     }
 }
 

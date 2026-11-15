@@ -183,7 +183,7 @@ admin_header('Analytics', 'analytics');
 </div>
 
 <?php if (!$hasData): ?>
-<div class="alert alert-light border small">No visits recorded in this period yet. Visits are counted from now on: open the <a href="../" target="_blank" rel="noopener">store</a> and the numbers appear here.</div>
+<div class="alert alert-light border small">No visits recorded in this period yet. Visits are counted from now on: open the <a href="<?= e(app_url()) ?>" target="_blank" rel="noopener">store</a> and the numbers appear here.</div>
 <?php endif; ?>
 
 <div class="row g-3 mb-4">

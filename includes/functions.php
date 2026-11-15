@@ -133,6 +133,14 @@ function asset_v(string $path): string
     return asset($path) . (is_file($file) ? "?v=" . filemtime($file) : "");
 }
 
+/** Public URL within the application's configured base path. */
+function app_url(string $path = ''): string
+{
+    $base = parse_url((string) (config('site_url') ?: ''), PHP_URL_PATH);
+    $base = is_string($base) && $base !== '/' ? rtrim($base, '/') : '';
+    return $base . '/' . ltrim($path, '/');
+}
+
 /** Limits requests by a hashed client IP and scope; trusts REMOTE_ADDR, never forwarded headers. */
 function request_rate_limited(string $scope, int $limit, int $windowSeconds): bool
 {

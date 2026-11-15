@@ -17,7 +17,9 @@ if (isset($generated[$path])) {
 } elseif (preg_match('#^/sitemap-(pages|products|guides)\.xml$#', $path, $m)) {
     $route = ['sitemap.php', ['part' => $m[1]]];
 } elseif (preg_match('#^/manage/([a-f0-9]{64})/?$#i', $path, $m)) {
-    $route = ['admin-entry.php', ['key' => $m[1]]];
+    $route = ['admin-entry.php', []];
+} elseif (preg_match('#^/manage/([a-f0-9]{64})/admin(?:/([A-Za-z0-9_-]+\.php))?/?$#i', $path, $m)) {
+    $route = ['admin-router.php', []];
 } elseif (is_file(__DIR__ . $path) || is_dir(__DIR__ . $path)) {
     $route = null;
 } elseif (preg_match('#^/([a-z0-9-]+-)?p(\d+)/?$#', $path, $m)) {

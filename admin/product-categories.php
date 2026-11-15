@@ -103,7 +103,7 @@ $row = function (array $c, bool $first, bool $last, int $products, bool $isSub) 
           <input class="form-control form-control-sm<?= $isSub ? '' : ' fw-semibold' ?>" name="name" form="<?= $formId ?>" value="<?= e($c['name']) ?>" maxlength="100" required aria-label="Name">
         </div>
       </td>
-      <td class="small text-muted text-nowrap"><a href="../<?= e(category_url($c)) ?>" target="_blank" rel="noopener"><?= e($c['slug']) ?></a></td>
+      <td class="small text-muted text-nowrap"><a href="<?= e(app_url(category_url($c))) ?>" target="_blank" rel="noopener"><?= e($c['slug']) ?></a></td>
       <td class="text-end small"><a class="text-decoration-none" href="products.php?cat=<?= (int) $c['id'] ?>"><?= $products ?></a></td>
       <td><div class="form-check form-switch mb-0"><input class="form-check-input" type="checkbox" role="switch" name="is_active" value="1" form="<?= $formId ?>" <?= $c['is_active'] ? 'checked' : '' ?> aria-label="Visible"></div></td>
       <td class="text-end text-nowrap">

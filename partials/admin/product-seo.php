@@ -35,7 +35,7 @@ $suggest = function (string $target, ?string $text, string $label = 'Use suggest
     <?php endif; ?>
 
     <div class="serp" aria-label="Google preview" data-serp data-auto-title="<?= e($auto['title'] ?? '') ?>" data-auto-desc="<?= e($auto['meta'] ?? '') ?>">
-      <div class="serp-site"><span class="serp-icon" aria-hidden="true"><img src="../favicon.ico" alt="" width="16" height="16"></span><span><span class="serp-name"><?= e(seo_store()) ?></span><span class="serp-url"><?= e(preg_replace('#^https?://#', '', seo_site_url())) ?> › <?= e(short_title($slug, 48)) ?></span></span></div>
+      <div class="serp-site"><span class="serp-icon" aria-hidden="true"><img src="<?= e(app_url('favicon.ico')) ?>" alt="" width="16" height="16"></span><span><span class="serp-name"><?= e(seo_store()) ?></span><span class="serp-url"><?= e(preg_replace('#^https?://#', '', seo_site_url())) ?> › <?= e(short_title($slug, 48)) ?></span></span></div>
       <div class="serp-title" data-serp-title><?= e($value('seo_title') ?: ($auto['title'] ?? 'Product name Price in Kenya | ' . seo_store())) ?></div>
       <div class="serp-desc" data-serp-desc><?= e($value('meta_description') ?: ($auto['meta'] ?? 'Buy … in Kenya. Free pickup in Nairobi & countrywide delivery.')) ?></div>
     </div>

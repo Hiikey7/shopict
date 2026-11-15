@@ -5,7 +5,7 @@
 <?php else: ?>
 </div>
 <?php endif; ?>
-<script src="../assets/js/bootstrap.bundle.min.js"></script>
-<script src="../<?= asset_v('admin/admin.js') ?>"></script>
+<script src="<?= e(app_url('assets/js/bootstrap.bundle.min.js')) ?>"></script>
+<script src="<?= e(app_url(asset_v('admin/admin.js'))) ?>"></script>
 </body>
 </html>

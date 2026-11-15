@@ -54,6 +54,6 @@ admin_header('Log in');
       </form>
     </div>
   </div>
-  <p class="text-center mt-3 small"><a href="../">← Back to the store</a></p>
+  <p class="text-center mt-3 small"><a href="<?= e(app_url()) ?>">← Back to the store</a></p>
 </div>
 <?php admin_footer(); ?>

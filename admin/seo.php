@@ -157,10 +157,10 @@ $tabUrl = fn (string $t) => 'seo.php' . ($t === 'products' ? '' : '?t=' . $t);
   <div class="col-lg-6"><div class="card card-body h-100 small">
     <div class="fw-semibold mb-1">For search engines</div>
     <div class="d-flex flex-wrap gap-2">
-      <a class="btn btn-sm btn-outline-secondary" href="../sitemap.xml" target="_blank" rel="noopener">Sitemap ↗</a>
-      <a class="btn btn-sm btn-outline-secondary" href="../robots.txt" target="_blank" rel="noopener">robots.txt ↗</a>
-      <a class="btn btn-sm btn-outline-secondary" href="../llms.txt" target="_blank" rel="noopener">llms.txt ↗</a>
-      <a class="btn btn-sm btn-outline-secondary" href="../google-merchant-feed.xml" target="_blank" rel="noopener">Shopping feed ↗</a>
+      <a class="btn btn-sm btn-outline-secondary" href="<?= e(app_url('sitemap.xml')) ?>" target="_blank" rel="noopener">Sitemap ↗</a>
+      <a class="btn btn-sm btn-outline-secondary" href="<?= e(app_url('robots.txt')) ?>" target="_blank" rel="noopener">robots.txt ↗</a>
+      <a class="btn btn-sm btn-outline-secondary" href="<?= e(app_url('llms.txt')) ?>" target="_blank" rel="noopener">llms.txt ↗</a>
+      <a class="btn btn-sm btn-outline-secondary" href="<?= e(app_url('google-merchant-feed.xml')) ?>" target="_blank" rel="noopener">Shopping feed ↗</a>
     </div>
     <div class="text-muted mt-2">The score is our own checklist to make each product easy for Google to understand. It is not a Google ranking.</div>
   </div></div>
@@ -217,7 +217,7 @@ $tabUrl = fn (string $t) => 'seo.php' . ($t === 'products' ? '' : '?t=' . $t);
     $filled = trim((string) $c['seo_title'] . $c['meta_description'] . $c['intro'] . $c['guide']) !== '';
 ?>
 <details class="card mb-2 card-collapse seo-item<?= $c['parent_id'] ? ' seo-item-sub' : '' ?>" id="cat-<?= (int) $c['id'] ?>">
-  <summary class="card-header d-flex align-items-center gap-2"><span class="fw-semibold"><?= e($c['name']) ?></span><span class="small text-muted"><?= $n ?> product<?= $n === 1 ? '' : 's' ?></span><?php if ($n === 0): ?><span class="badge badge-soft">Not on Google while empty</span><?php endif; ?><?php if ($filled): ?><span class="badge badge-on">Custom text</span><?php endif; ?><a class="small ms-auto" href="../<?= e(category_url($c)) ?>" target="_blank" rel="noopener">View ↗</a></summary>
+          <summary class="card-header d-flex align-items-center gap-2"><span class="fw-semibold"><?= e($c['name']) ?></span><span class="small text-muted"><?= $n ?> product<?= $n === 1 ? '' : 's' ?></span><?php if ($n === 0): ?><span class="badge badge-soft">Not on Google while empty</span><?php endif; ?><?php if ($filled): ?><span class="badge badge-on">Custom text</span><?php endif; ?><a class="small ms-auto" href="<?= e(app_url(category_url($c))) ?>" target="_blank" rel="noopener">View ↗</a></summary>
   <form class="card-body" method="post">
     <?= csrf_field() ?><input type="hidden" name="action" value="category"><input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
     <div class="row g-3">
@@ -241,7 +241,7 @@ $tabUrl = fn (string $t) => 'seo.php' . ($t === 'products' ? '' : '?t=' . $t);
     $row = $b['row'];
 ?>
 <details class="card mb-2 card-collapse seo-item" id="brand-<?= (int) ($row['id'] ?? 0) ?>">
-  <summary class="card-header d-flex align-items-center gap-2"><span class="fw-semibold"><?= e($b['name']) ?></span><span class="small text-muted"><?= $n ?> product<?= $n === 1 ? '' : 's' ?></span><?php if ($n === 0): ?><span class="badge badge-soft">Not on Google while empty</span><?php endif; ?><a class="small ms-auto" href="../<?= e(brand_url($b['name'])) ?>" target="_blank" rel="noopener">View ↗</a></summary>
+          <summary class="card-header d-flex align-items-center gap-2"><span class="fw-semibold"><?= e($b['name']) ?></span><span class="small text-muted"><?= $n ?> product<?= $n === 1 ? '' : 's' ?></span><?php if ($n === 0): ?><span class="badge badge-soft">Not on Google while empty</span><?php endif; ?><a class="small ms-auto" href="<?= e(app_url(brand_url($b['name']))) ?>" target="_blank" rel="noopener">View ↗</a></summary>
   <?php if ($row): ?>
   <form class="card-body" method="post">
     <?= csrf_field() ?><input type="hidden" name="action" value="brand"><input type="hidden" name="id" value="<?= (int) $row['id'] ?>">
@@ -319,7 +319,7 @@ $tabUrl = fn (string $t) => 'seo.php' . ($t === 'products' ? '' : '?t=' . $t);
 ?>
 <div class="card card-body mb-3 small">
   <div class="fw-semibold mb-1">Google Merchant Center feed</div>
-  <p class="mb-2">Address to add in Merchant Center → Products → Feeds → “Scheduled fetch” (daily): <code><?= e(seo_site_url()) ?>/google-merchant-feed.xml</code> · <a href="../google-merchant-feed.xml" target="_blank" rel="noopener">Open ↗</a></p>
+  <p class="mb-2">Address to add in Merchant Center → Products → Feeds → “Scheduled fetch” (daily): <code><?= e(seo_site_url()) ?>/google-merchant-feed.xml</code> · <a href="<?= e(app_url('google-merchant-feed.xml')) ?>" target="_blank" rel="noopener">Open ↗</a></p>
   <p class="mb-2">It sends <?= $visible ?> visible products (one item per option for products with options), with the same name, price, stock, condition, pictures and links as the product pages, and updates itself whenever you change a product.</p>
   <p class="mb-0 text-muted">Delivery cost: <?= (float) setting('delivery_fee', '0') > 0 ? 'sent from Settings (' . money((float) setting('delivery_fee')) . ').' : 'not sent, because delivery is “confirmed by phone”. Set your delivery rates and the 3-day return policy in Merchant Center → Shipping and returns.' ?></p>
 </div>

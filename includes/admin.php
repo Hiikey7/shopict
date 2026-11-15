@@ -7,9 +7,12 @@ require_once __DIR__ . '/bootstrap.php';
 
 // A private entry-token session must be established before any admin endpoint is usable.
 $adminAccessToken = (string) config('admin_access_token');
+$adminRoutePrefix = app_url('manage/' . rawurlencode($adminAccessToken) . '/admin/');
+$adminRequestPath = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
 $adminGateSession = (string) ($_SESSION['admin_gate'] ?? '');
 $adminGateActivity = (int) ($_SESSION['admin_gate_last_activity'] ?? 0);
 if (!preg_match('/^[a-f0-9]{64}$/i', $adminAccessToken)
+    || !str_starts_with($adminRequestPath, $adminRoutePrefix)
     || $adminGateActivity < 1
     || time() - $adminGateActivity > 43200
     || !hash_equals(hash('sha256', $adminAccessToken), $adminGateSession)
@@ -309,18 +312,14 @@ function admin_asset(?string $path): string
     if (!$path) {
         return '';
     }
-    return preg_match('#^https?://#i', $path) ? image_url($path, 300) : '../' . asset($path);
+    return preg_match('#^https?://#i', $path) ? image_url($path, 300) : app_url(asset($path));
 }
 
 /** Build an admin link from the current admin directory, independent of the current page URL. */
 function admin_url(string $path = 'index.php'): string
 {
-    $script = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? '/admin/index.php'));
-    $directory = rtrim(dirname($script), '/');
-    if ($directory === '' || $directory === '.') {
-        $directory = '/admin';
-    }
-    return $directory . '/' . ltrim($path, '/');
+    $token = (string) config('admin_access_token');
+    return app_url('manage/' . rawurlencode($token) . '/admin/' . ltrim($path, '/'));
 }
 
 // ---------------------------------------------------------------- uploads

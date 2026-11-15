@@ -81,7 +81,7 @@ foreach (category_tree(true) as $main) {
     }
 }
 admin_header($post ? 'Edit article' : 'New article', 'seo');
-$link = $post ? '../' . post_url($post) : null;
+$link = $post ? app_url(post_url($post)) : null;
 ?>
 <a href="seo.php?t=guides" class="small text-decoration-none">← All articles</a>
 <?php if ($errors): ?><div class="alert alert-danger mt-3">Please fix the highlighted fields.</div><?php endif; ?>

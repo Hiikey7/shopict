@@ -39,11 +39,11 @@ $newOrders = $admin ? (int) db()->query("SELECT COUNT(*) FROM orders WHERE statu
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title><?= e($title) ?> · <?= e(setting('store_name', 'Shop ICT Gadgets')) ?> Admin</title>
-  <link rel="icon" href="../favicon.ico">
+  <link rel="icon" href="<?= e(app_url('favicon.ico')) ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/admin/bootstrap.min.css">
-  <link rel="stylesheet" href="../<?= asset_v('admin/admin.css') ?>">
+  <link rel="stylesheet" href="<?= e(admin_asset('admin/bootstrap.min.css')) ?>">
+  <link rel="stylesheet" href="<?= e(app_url(asset_v('admin/admin.css'))) ?>">
 </head>
 <body>
 <?php if ($admin): ?>
@@ -55,7 +55,7 @@ $newOrders = $admin ? (int) db()->query("SELECT COUNT(*) FROM orders WHERE statu
       <a href="<?= e(admin_url($href)) ?>" class="<?= $on ? 'active' : '' ?>"<?= $on ? ' aria-current="page"' : '' ?>><?= isset($tabIcons[$key]) ? $tabIcons[$key] : '' ?><span><?= e($label) ?></span><?php if ($key === 'orders' && $newOrders): ?><span class="nav-badge" title="New orders"><?= $newOrders ?></span><?php endif; ?></a>
       <?php endforeach; ?>
     </nav>
-    <div class="admin-desk-foot"><a href="../" target="_blank" rel="noopener">View store ↗</a></div>
+    <div class="admin-desk-foot"><a href="<?= e(app_url()) ?>" target="_blank" rel="noopener">View store ↗</a></div>
   </aside>
   <aside class="admin-sidebar" id="adminSidebar" aria-label="More admin pages">
     <div class="admin-sidebar-head">
@@ -68,7 +68,7 @@ $newOrders = $admin ? (int) db()->query("SELECT COUNT(*) FROM orders WHERE statu
       <?php endforeach; ?>
     </nav>
     <div class="admin-sidebar-foot">
-      <a class="d-none d-md-inline" href="../" target="_blank" rel="noopener">View store ↗</a>
+      <a class="d-none d-md-inline" href="<?= e(app_url()) ?>" target="_blank" rel="noopener">View store ↗</a>
       <form method="post" action="logout.php" class="d-md-none"><?= csrf_field() ?><button class="admin-panel-logout">Log out</button></form>
     </div>
   </aside>
@@ -80,7 +80,7 @@ $newOrders = $admin ? (int) db()->query("SELECT COUNT(*) FROM orders WHERE statu
       <span class="admin-topbar-spacer" aria-hidden="true"></span>
       <div class="admin-user">
         <span class="text-muted small d-none d-sm-inline"><?= e($admin['name']) ?></span>
-        <a class="btn btn-sm btn-outline-secondary d-md-none" href="../" target="_blank" rel="noopener">View store ↗</a>
+      <a class="btn btn-sm btn-outline-secondary d-md-none" href="<?= e(app_url()) ?>" target="_blank" rel="noopener">View store ↗</a>
         <form method="post" action="logout.php" class="d-none d-md-inline"><?= csrf_field() ?><button class="btn btn-sm btn-outline-secondary">Log out</button></form>
       </div>
     </header>

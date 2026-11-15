@@ -15,8 +15,10 @@ Options -Indexes
   RewriteRule ^llms\.txt$ llms.php [L]
   RewriteRule ^google-merchant-feed\.xml$ feed.php [L]
 
-  # Secret admin entry point. Direct /admin requests still require its session gate.
-  RewriteRule ^manage/([a-f0-9]{64})/?$ admin-entry.php?key=$1 [L,QSA,NC]
+  # Secret entry point; dashboard pages are served only below the tokenized route.
+  RewriteRule ^manage/([a-f0-9]{64})/?$ admin-entry.php [L,NC]
+  # Keep the secret token in every dashboard URL and dispatch only allowlisted admin PHP pages.
+  RewriteRule ^manage/([a-f0-9]{64})/admin(?:/([A-Za-z0-9_-]+\.php))?/?$ admin-router.php [L,QSA,NC]
 
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d

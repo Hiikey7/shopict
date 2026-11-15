@@ -169,7 +169,7 @@ admin_header('Edit section', 'sections');
   <div class="sticky-actions d-flex gap-2">
     <button class="btn btn-primary px-4" type="submit">Save section</button>
     <a class="btn btn-outline-secondary" href="sections.php">Cancel</a>
-    <a class="btn btn-link ms-auto" href="../" target="_blank" rel="noopener">View store ↗</a>
+    <a class="btn btn-link ms-auto" href="<?= e(app_url()) ?>" target="_blank" rel="noopener">View store ↗</a>
   </div>
 </form>
 <?php admin_footer(); ?>
