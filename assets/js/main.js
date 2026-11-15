@@ -17,6 +17,13 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+  // Disable the browser context menu on storefront content, while keeping native form editing available.
+  document.addEventListener("contextmenu", (event) => {
+    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+    if (target?.closest("input, textarea, select, [contenteditable='true'], [role='textbox']")) return;
+    event.preventDefault();
+  });
+
   // Clean leaked product IDs from every storefront product-price treatment, including sections
   // and dynamically inserted content.
   function cleanLeakedProductId(root = document) {
