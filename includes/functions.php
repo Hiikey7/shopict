@@ -289,6 +289,11 @@ const CURRENCY_SYMBOL = 'KES';
 /** A price for display, e.g. "KES12,499". */
 function money($amount): string
 {
+    if (is_string($amount)) {
+        $amount = preg_replace('/\b(?:KES|KSh)\s*/iu', '', $amount);
+        $amount = preg_replace('/^\s*262145(?=\s*[\d,])\s*/u', '', $amount);
+        $amount = str_replace(',', '', $amount);
+    }
     return CURRENCY_SYMBOL . number_format(round((float) $amount), 0, '.', ',');
 }
 
