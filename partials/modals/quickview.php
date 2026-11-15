@@ -22,7 +22,7 @@ $qvBullets = $qv ? product_bullets($qv) : [];
           <div class="swiper tf-product-view-main" data-qv-main>
             <div class="swiper-wrapper">
               <?php foreach ($qvImages as $image): ?>
-              <div class="swiper-slide"><a class="d-block tf-image-view" href="<?= $qv ? e(product_url($qv)) : './' ?>"><?= img($image, 900, 1000, 'lazyload') ?></a></div>
+              <div class="swiper-slide"><a class="d-block tf-image-view" href="<?= $qv ? e(product_url($qv)) : './' ?>"><?= img($image, 900, 1000, 'lazyload', $qv['title'] ?? 'Product image') ?></a></div>
               <?php endforeach; ?>
             </div>
             <div class="swiper-button-prev nav-swiper-2 single-slide-prev snbpqv"></div>
@@ -31,7 +31,7 @@ $qvBullets = $qv ? product_bullets($qv) : [];
           <div class="swiper tf-product-view-thumbs" data-direction="horizontal" data-qv-thumbs>
             <div class="swiper-wrapper">
               <?php foreach ($qvImages as $image): ?>
-              <div class="swiper-slide"><div class="item"><?= img($image, 900, 1000) ?></div></div>
+              <div class="swiper-slide"><div class="item"><?= img($image, 900, 1000, '', $qv['title'] ?? 'Product image') ?></div></div>
               <?php endforeach; ?>
             </div>
           </div>

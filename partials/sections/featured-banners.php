@@ -14,7 +14,7 @@ $lines = fn (?string $text) => lines($text) . '<br/>';
         <?php foreach ($cards as $b): ?>
         <div class="swiper-slide">
           <a class="wg-product-view style-2 hover-img d-block" href="<?= e($b['link_url'] ?: './') ?>"><div class="image img-style">
-              <?= $b['image'] ? img($b['image'], 972, 424, 'lazyload') : '' ?>
+              <?= $b['image'] ? img($b['image'], 972, 424, 'lazyload', trim($b['title'] . ' ' . $b['subtitle'])) : '' ?>
             </div>
             <div class="content">
               <div class="box-title">

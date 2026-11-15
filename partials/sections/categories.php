@@ -17,7 +17,7 @@ if (!$categories) {
       <?php foreach ($categories as $c): $href = $c['slug'] ? shop_url(['cat' => $c['slug']]) : 'shop.php'; ?>
       <li>
         <a class="home-cat hover-img" href="<?= e($href) ?>">
-          <span class="home-cat-img img-style-2"><?= img($c['img_src'], 296, 296) ?></span>
+          <span class="home-cat-img img-style-2"><?= img($c['img_src'], 296, 296, '', $c['title']) ?></span>
           <span class="home-cat-name body-text-3"><?= e(str_replace("\n", ' ', $c['title'])) ?></span>
         </a>
       </li>

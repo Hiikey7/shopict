@@ -20,9 +20,9 @@ $bg = fn (?string $path) => $path ? ' style="background-image: url(' . e(asset($
           <div class="swiper-slide" role="group" aria-roledescription="slide" aria-label="<?= $i + 1 ?> of <?= count($mains) ?>">
               <div class="banner-slide-product flex-md-nowrap hover-img has-bg-img"<?= $bg($main['bg_image']) ?>>
                 <?php if (!empty($main['link_url']) && $main['link_url'] !== '#'): ?>
-                <a href="<?= e($main['link_url']) ?>" class="image img-style overflow-visible"><?= $main['image'] ? img($main['image'], 794, 794, 'lazyload', '', 'color:transparent', $i === 0 ? 'eager' : 'lazy') : '' ?></a>
+                <a href="<?= e($main['link_url']) ?>" class="image img-style overflow-visible"><?= $main['image'] ? img($main['image'], 794, 794, 'lazyload', trim($main['title'] . ' ' . $main['title_highlight']), 'color:transparent', $i === 0 ? 'eager' : 'lazy') : '' ?></a>
                 <?php else: ?>
-                <div class="image img-style overflow-visible"><?= $main['image'] ? img($main['image'], 794, 794, 'lazyload', '', 'color:transparent', $i === 0 ? 'eager' : 'lazy') : '' ?></div>
+                <div class="image img-style overflow-visible"><?= $main['image'] ? img($main['image'], 794, 794, 'lazyload', trim($main['title'] . ' ' . $main['title_highlight']), 'color:transparent', $i === 0 ? 'eager' : 'lazy') : '' ?></div>
                 <?php endif; ?>
                 <div class="content text-center">
                   <div class="box-title hero-main-copy">
@@ -115,7 +115,7 @@ $bg = fn (?string $path) => $path ? ' style="background-image: url(' . e(asset($
             </div>
             <?php endif; ?>
           </div>
-          <a href="<?= e($side2['link_url'] ?: '#') ?>" class="d-inline-flex w-100 img-style"><?= $side2['image'] ? img($side2['image'], 808, 808, 'lazyload') : '' ?></a>
+          <a href="<?= e($side2['link_url'] ?: '#') ?>" class="d-inline-flex w-100 img-style"><?= $side2['image'] ? img($side2['image'], 808, 808, 'lazyload', $side2['title']) : '' ?></a>
         </div>
         <?php endif; ?>
       </div>

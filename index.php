@@ -6,7 +6,7 @@ track_page_view();
 
 partial('page-start', [
     'title'       => setting('store_name', 'Shop ICT Gadgets') . ' – Laptops, Monitors, Phones & Accessories in Nairobi',
-    'description' => 'Buy laptops, monitors, phones, audio, printers and computer accessories in Kenya from ' . setting('store_name', 'Shop ICT Gadgets') . ', Laxmi Plaza, Nairobi. Free pickup or countrywide delivery.',
+    'description' => 'Shop laptops, monitors, phones, printers and accessories in Kenya at ' . setting('store_name', 'Shop ICT Gadgets') . '. Visit Laxmi Plaza or get countrywide delivery.',
     'canonical'   => '',
     'jsonLd'      => [seo_store_ld(), seo_website_ld()],
 ]);

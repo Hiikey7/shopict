@@ -18,7 +18,7 @@ while (count($list) < 6) {
         <?php foreach ($list as $i => $b): $alt = $i % 2 === 1; ?>
         <div class="swiper-slide">
           <a class="banner-image-product-2 <?= $alt ? 'style-2 ' : '' ?>type-sp-2 hover-img d-block" href="<?= e($b['link_url'] ?: './') ?>"><div class="item-image img-style overflow-visible <?= $alt ? 'position3' : 'position2' ?>">
-              <?= $b['image'] ? img($b['image'], $alt ? 231 : 239, $alt ? 230 : 227, 'lazyload') : '' ?>
+              <?= $b['image'] ? img($b['image'], $alt ? 231 : 239, $alt ? 230 : 227, 'lazyload', trim($b['title'] . ' ' . $b['title_highlight'])) : '' ?>
             </div>
             <div
               class="item-banner has-bg-img"

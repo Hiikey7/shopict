@@ -1475,10 +1475,7 @@ a.co-thumb { display: block; }
 /* Product pictures: shown whole and centred (no cropping), on white – suits PNGs with a transparent background. */
 .card-product .card-product-wrapper { background: #fff; }
 .card-product .card-product-wrapper img { object-fit: contain !important; object-position: center; padding: 6%; background: transparent; }
-img[data-image-skeleton] { opacity: .35; background-color: #f1f3f5 !important; background-image: linear-gradient(100deg, #f1f3f5 20%, #e5e9ee 40%, #f1f3f5 60%) !important; background-size: 200% 100% !important; animation: image-skeleton-shimmer 1.4s ease-in-out infinite; transition: opacity .35s ease; }
-img:not([data-image-skeleton]) { transition: opacity .35s ease; }
-@keyframes image-skeleton-shimmer { to { background-position: -200% 0; } }
-@media (prefers-reduced-motion: reduce) { img[data-image-skeleton] { animation: none; } }
+img[data-image-skeleton] { opacity: .35; background-color: #f1f3f5 !important; background-image: linear-gradient(100deg, #f1f3f5 20%, #e5e9ee 40%, #f1f3f5 60%) !important; background-size: 200% 100% !important; }
 .modal-quick-view .quickview-image .tf-image-view { background: #fff; }
 .modal-quick-view .quickview-image .tf-image-view img { object-fit: contain !important; object-position: center; padding: 4%; }
 .tf-product-view-thumbs .swiper-slide .item img { object-fit: contain !important; background: #fff; }

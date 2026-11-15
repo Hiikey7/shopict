@@ -18,7 +18,7 @@ $products = section_products('smart_home');
     <div class="smart-grid<?= $promo ? ' has-banner' : '' ?>">
       <?php if ($promo): ?>
       <div class="smart-grid-banner banner-product-2 d-none d-xl-block wow fadeInLeft" data-wow-delay="0s">
-        <a href="<?= e($promo['link_url'] ?: '#') ?>" class="image h-100"><?= $promo['image'] ? img($promo['image'], 400, 650, 'lazyload') : '' ?></a>
+        <a href="<?= e($promo['link_url'] ?: '#') ?>" class="image h-100"><?= $promo['image'] ? img($promo['image'], 400, 650, 'lazyload', trim($promo['title'] . ' ' . $promo['subtitle'])) : '' ?></a>
         <div class="content">
           <div class="box-top"><p class="text-white body-text-3 text-uppercase fw-2" style="letter-spacing: 9.8px"><?= e($promo['eyebrow']) ?></p></div>
           <div class="box-bottom">
