@@ -1677,3 +1677,36 @@ h1.shop-h1 { font-size: 40px; line-height: 60px; }
 @media (prefers-reduced-motion: reduce) {
   .seasonal-effect { display: none; }
 }
+
+/* Long variant values wrap inside the available mobile width; labels get their own row. */
+@media (max-width: 575.98px) {
+  .pv-info .pv-variants .qv-variant-group,
+  .modal-quick-view .qv-variant-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    row-gap: 5px;
+    min-width: 0;
+  }
+  .pv-info .pv-variants .qv-variant-label,
+  .modal-quick-view .qv-variant-label {
+    grid-column: 1;
+    min-width: 0;
+    margin: 0;
+  }
+  .pv-info .pv-variants .qv-variant-list,
+  .modal-quick-view .qv-variant-list {
+    grid-column: 1;
+    min-width: 0;
+    width: 100%;
+  }
+  .pv-info .pv-variants .qv-variant-btn,
+  .modal-quick-view .qv-variant-btn {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+  }
+}

@@ -54,7 +54,7 @@ $whatsapp = whatsapp_number();
                 <?php if ($itemImageUrl !== ''): ?><img src="<?= e($itemImageUrl) ?>" width="50" height="50" alt="<?= e($it['title']) ?>" style="display:block;width:50px;height:50px;border:0;object-fit:contain;"><?php endif; ?>
               </td>
               <td valign="middle" style="padding:12px 6px;border-bottom:1px solid #eeeeef;font-size:13px;line-height:19px;word-break:break-word;">
-                <strong style="color:#202124;font-size:13px;"><?= e($it['title']) ?></strong>
+                <strong style="color:#202124;font-size:13px;"><?= e(short_title((string) $it['title'], 32)) ?></strong>
                 <?php if (!empty($it['variant_label'])): ?><br><span style="color:#656a70;"><?= e($it['variant_label']) ?></span><?php endif; ?>
                 <?php if (!empty($it['is_preorder'])): ?><br><span style="color:#8a5a00;font-weight:bold;">Pre-order</span><?php endif; ?>
                 <br><span style="color:#656a70;">Qty: <?= (int) $it['quantity'] ?></span>
@@ -84,7 +84,7 @@ $whatsapp = whatsapp_number();
             <?= e(order_address_line($order)) ?><br>
             <?= e($order['phone']) ?><br>
             <?php if (!empty($order['notes'])): ?><span style="color:#555b62;">Note: <?= e($order['notes']) ?></span><br><?php endif; ?>
-            <span style="color:#555b62;">Payment: Pay on delivery</span>
+            <span style="color:#555b62;">Payment: To be confirmed</span>
           </p>
         </td></tr>
 

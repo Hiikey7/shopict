@@ -164,6 +164,9 @@ function shop_price_bounds(?string $category, string $search, array $categoryIds
 function shop_search_terms(string $search): array
 {
     $normalized = mb_strtolower($search, 'UTF-8');
+    // Treat joined measurements (27inch, 16gb, 1tb) like their spaced forms so
+    // they can match variant options stored as separate words or JSON values.
+    $normalized = preg_replace('/(?<=\d)(?=(?:inches?|in|gb|tb|mb|khz|mhz|ghz|hz)\b)/iu', ' ', $normalized) ?? $normalized;
     $normalized = preg_replace('/[^\p{L}\p{N}]+/u', ' ', $normalized) ?? $normalized;
     $terms = preg_split('/\s+/u', trim($normalized), -1, PREG_SPLIT_NO_EMPTY) ?: [];
     $terms = array_map(fn ($term) => preg_replace('/inches$/u', 'inch', $term) ?? $term, $terms);

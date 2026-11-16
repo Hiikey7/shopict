@@ -311,7 +311,7 @@ function order_email_text(array $order, array $items, string $store, string $ban
 {
     $lines = ["ORDER CONFIRMED — Thank you for shopping with $store, {$order['customer_name']}!", '', "Order: {$order['order_number']}", ''];
     foreach ($items as $it) {
-        $lines[] = '- ' . $it['title'] . ($it['variant_label'] ? " ({$it['variant_label']})" : '') . (!empty($it['is_preorder']) ? ' [PRE-ORDER]' : '') . " x{$it['quantity']}  " . money($it['line_total']);
+        $lines[] = '- ' . short_title((string) $it['title'], 32) . ($it['variant_label'] ? " ({$it['variant_label']})" : '') . (!empty($it['is_preorder']) ? ' [PRE-ORDER]' : '') . " x{$it['quantity']}  " . money($it['line_total']);
     }
     $lines[] = '';
     $lines[] = 'Subtotal: ' . money($order['subtotal']);
@@ -319,10 +319,11 @@ function order_email_text(array $order, array $items, string $store, string $ban
         $lines[] = 'Promo code ' . $order['promo_code'] . ': -' . money($order['discount']);
     }
     $lines[] = 'Delivery: ' . delivery_cost_text($order['delivery_method'] ?? 'delivery', (float) $order['delivery_fee']);
-    $lines[] = 'Total: ' . money($order['total']) . ' (pay on delivery)';
+    $lines[] = 'Total: ' . money($order['total']);
     $lines[] = '';
     $lines[] = (($order['delivery_method'] ?? 'delivery') === 'pickup' ? 'Pickup: ' : 'Deliver to: ') . order_address_line($order);
     $lines[] = 'Phone: ' . $order['phone'];
+    $lines[] = 'Payment: To be confirmed';
     if ($orderUrl !== '') {
         $lines[] = 'View your order: ' . $orderUrl;
     }

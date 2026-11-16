@@ -95,7 +95,8 @@ admin_header('Order ' . $order['order_number'], 'orders');
             <tr><td class="order-thumb-col"></td><td colspan="3" class="text-end text-muted">Subtotal</td><td class="text-end"><?= money($order['subtotal']) ?></td></tr>
             <?php if ((float) $order['discount'] > 0): ?><tr><td class="order-thumb-col"></td><td colspan="3" class="text-end text-muted">Promo code <strong><?= e((string) $order['promo_code']) ?></strong></td><td class="text-end text-success">−<?= money($order['discount']) ?></td></tr><?php endif; ?>
             <tr><td class="order-thumb-col"></td><td colspan="3" class="text-end text-muted">Delivery</td><td class="text-end"><?= e(delivery_cost_text($order['delivery_method'], (float) $order['delivery_fee'])) ?></td></tr>
-            <tr><td class="order-thumb-col"></td><td colspan="3" class="text-end fw-semibold">Total (pay on delivery)</td><td class="text-end fw-bold"><?= money($order['total']) ?></td></tr>
+            <tr><td class="order-thumb-col"></td><td colspan="3" class="text-end text-muted">Payment</td><td class="text-end">To be confirmed</td></tr>
+            <tr><td class="order-thumb-col"></td><td colspan="3" class="text-end fw-semibold">Total</td><td class="text-end fw-bold"><?= money($order['total']) ?></td></tr>
           </tfoot>
         </table>
       </div>

@@ -524,7 +524,14 @@
   // ------------------------------------------------------------- formatting
 
   /** "KES12,499" — same format as money() in PHP. */
-  const money = (n) => `KES${Math.round(Number(n) || 0).toLocaleString("en-US")}`;
+  const money = (n) => {
+    const amount = String(n ?? "")
+      .replace(/\b(?:KES|KSh)\s*/gi, "")
+      .replace(/^\s*262145(?=\s*[\d,])\s*/i, "")
+      .replace(/,/g, "")
+      .trim();
+    return `KES${Math.round(Number(amount) || 0).toLocaleString("en-US")}`;
+  };
 
   const el = (tag, className, text) => {
     const node = document.createElement(tag);
