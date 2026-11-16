@@ -286,15 +286,21 @@ function store_logo(): string
 /** Currency shown in front of every price. Prices are stored and shown in whole shillings. */
 const CURRENCY_SYMBOL = 'KES';
 
+/** Remove the known leaked product ID when it has been concatenated before a displayed price. */
+function clean_leaked_price_prefix(string $text): string
+{
+    return preg_replace('/(?<!\d)262145(?=\s*(?:(?:KES|KSh)\s*)?[\d,])\s*/iu', '', $text) ?? $text;
+}
+
 /** A price for display, e.g. "KES12,499". */
 function money($amount): string
 {
     // PDO may return numeric columns as numbers, so normalize before stripping the leaked ID prefix.
     $amount = (string) $amount;
     $amount = preg_replace('/\b(?:KES|KSh)\s*/iu', '', $amount);
-    $amount = preg_replace('/^\s*262145(?=\s*[\d,])\s*/u', '', $amount);
+    $amount = clean_leaked_price_prefix($amount);
     $amount = str_replace(',', '', $amount);
-    return CURRENCY_SYMBOL . number_format(round((float) $amount), 0, '.', ',');
+    return clean_leaked_price_prefix(CURRENCY_SYMBOL . number_format(round((float) $amount), 0, '.', ','));
 }
 
 /** Format a price entered as banner text, normalizing KSh/KES and grouping whole shillings. */
@@ -305,7 +311,7 @@ function money_text($value): string
         return '';
     }
     // Older storefront markup could prepend the leaked banner/product ID to a price.
-    $text = preg_replace('/262145(?=\s*(?:(?:KES|KSh)\s*)?[\d,])\s*/iu', '', $text);
+    $text = clean_leaked_price_prefix($text);
     $text = preg_replace('/\b(?:KES|KSh)\s*/iu', '', $text);
     if (preg_match('/^([^\d]*)([\d,]+(?:\.\d+)?)(.*)$/u', $text, $m)) {
         $prefix = trim($m[1]);

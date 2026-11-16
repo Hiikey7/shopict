@@ -5,6 +5,29 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+  // Final guard for order/product prices if a template concatenates the leaked ID into visible text.
+  const cleanLeakedPriceText = (root) => {
+    const clean = (node) => {
+      const value = node.nodeValue.replace(/(?<!\d)262145(?=\s*(?:(?:KES|KSh)\s*)?[\d,])\s*/gi, "");
+      if (value !== node.nodeValue) node.nodeValue = value;
+    };
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) clean(walker.currentNode);
+  };
+  cleanLeakedPriceText(document.body);
+  new MutationObserver((records) => {
+    records.forEach((record) => {
+      if (record.type === "characterData") cleanLeakedPriceText(record.target.parentElement || document.body);
+      record.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const value = node.nodeValue.replace(/(?<!\d)262145(?=\s*(?:(?:KES|KSh)\s*)?[\d,])\s*/gi, "");
+          if (value !== node.nodeValue) node.nodeValue = value;
+        }
+        else if (node.nodeType === Node.ELEMENT_NODE) cleanLeakedPriceText(node);
+      });
+    });
+  }).observe(document.body, { childList: true, characterData: true, subtree: true });
+
   // Banner product search: type a product name, then choose its matching suggestion.
   const bannerProductSearch = $("[data-banner-product-search]");
   const bannerProductId = $("[data-banner-product-id]");

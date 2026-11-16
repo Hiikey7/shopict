@@ -295,6 +295,9 @@ function send_order_emails(array $order): bool
         'bannerLink' => $bannerLink,
     ]);
     $text = order_email_text($order, $items, $store, $bannerLink, order_url($order, true));
+    // Sanitize the final generated bodies too, including any template-level concatenation.
+    $html = clean_leaked_price_prefix($html);
+    $text = clean_leaked_price_prefix($text);
     $notify = trim((string) setting('order_notify_email', ''));
 
     $ok = send_mail($order['email'], "Order {$order['order_number']} confirmed — $store", $html, $text, $notify !== '' ? $notify : null);
